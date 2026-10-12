@@ -1,0 +1,21 @@
+# 인증정보 (절대 커밋하지 않습니다)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 에디터 / OS
+.idea/
+.vscode/
+.DS_Store
