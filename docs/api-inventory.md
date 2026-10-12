@@ -4,7 +4,7 @@
 기준 자료는 공식 포털의 [시작하기](https://openapi.ls-sec.co.kr/howto-use) 페이지와 포털이 제공하는 TR 명세 JSON(`ls-openapi-tr-guides.json`, 버전 `20261007070834325`)입니다.
 다른 증권사의 명세는 적용하지 않았고, 서드파티 라이브러리·블로그에서 본 내용은 근거로 쓰지 않았습니다.
 
-상태 표기: **확인** = 공식 자료에서 직접 확인, **미확인** = 공식 자료로 확인하지 못함, **미검증** = 공식 자료에는 있으나 실서버로 동작을 확인하지 않음.
+상태 표기: **확인** = 공식 자료에서 직접 확인, **실서버 확인** = 실제 서버를 호출해 동작을 확인(관측 일자와 조건 병기), **미확인** = 공식 자료로 확인하지 못함, **미검증** = 공식 자료에는 있으나 실서버로 동작을 확인하지 않음.
 
 ## 서버
 
@@ -13,11 +13,11 @@
 | REST | `https://openapi.ls-sec.co.kr:8080` | 확인 |
 | WebSocket(실전) | `wss://openapi.ls-sec.co.kr:9443` | 확인 (이 저장소에서는 미사용) |
 | WebSocket(모의) | `wss://openapi.ls-sec.co.kr:29443` | 확인 (이 저장소에서는 미사용) |
-| REST(모의투자) | - | **미확인** — 모의투자는 앱키/시크릿키가 별도 발급된다는 것만 명시되어 있고(이용안내), REST 주소는 명시 없음. TR 명세 JSON은 WebSocket에만 모의 주소가 있고 REST는 주소가 하나뿐이라 같은 주소일 수 있으나 **추정**임. [live-testing.md](live-testing.md)로 확인 |
+| REST(모의투자) | `https://openapi.ls-sec.co.kr:8080` (실전과 동일) | **실서버 확인** — 공식 자료에는 REST 모의 주소가 명시되어 있지 않았으나(모의투자는 앱키/시크릿키만 별도 발급), 모의투자 키로 위 주소에서 토큰 발급·폐기가 성공함 (2026-10-12, 1회 관측, 발급 요청만 확인) |
 
 ## 인증
 
-### 접근토큰 발급 — 확인, 구현됨 (실서버 미검증)
+### 접근토큰 발급 — 확인, 구현됨, 실서버 확인 (모의투자 키, 2026-10-12)
 
 - `POST /oauth2/token`, `Content-Type: application/x-www-form-urlencoded`
 - 요청 본문
@@ -29,15 +29,15 @@
 | `appsecretkey` | 포털에서 발급된 앱 시크릿키 |
 | `scope` | `oob` 고정 |
 
-- 응답 필드: `access_token`, `token_type`(Bearer), `scope`, 유효기간(아래 "자료 간 불일치" 참고)
-- 예시 응답의 유효기간은 86400초(24시간)이지만, 이는 "시작하기" 페이지 예시 값이며 실서버로 확인하지 않았습니다.
+- 응답 필드(실서버 확인): `access_token`, `expires_in`, `scope`(`oob`), `token_type`(`Bearer`). 유효기간 필드명은 `expires_in`입니다.
+- "시작하기" 예시는 86400초(24시간)였지만 실제 응답의 `expires_in`은 46332초였습니다(1회 관측). 값이 고정이 아닐 수 있으니 하드코딩하지 말고 응답 값을 사용하세요.
 - 구현: `src/ls_openapi/auth.py` (`issue_token`, `TokenManager`)
 
-### 접근토큰 폐기 — 확인, 구현됨 (실서버 미검증)
+### 접근토큰 폐기 — 확인, 구현됨, 실서버 확인 (모의투자 키, 2026-10-12)
 
 - `POST /oauth2/revoke`, `Content-Type: application/x-www-form-urlencoded`
 - 요청 본문: `appkey`, `appsecretkey`, `token_type_hint`(`access_token` 또는 `refresh_token`), `token`
-- 응답 필드: `code`, `message`. **성공을 뜻하는 `code` 값은 명세에 없어** 코드는 응답을 해석하지 않고 그대로 반환합니다.
+- 응답 필드(실서버 확인): `code`, `message`. 성공 시 `code`는 `200`, `message`는 "접근토큰 폐기에 성공하였습니다."였습니다(1회 관측). 실패 시의 `code` 값은 확인하지 않았고, 코드는 응답을 해석하지 않고 그대로 반환합니다.
 - 구현: `src/ls_openapi/auth.py` (`revoke_token`, `TokenManager.revoke`)
 
 ## TR 호출 공통 규칙 — 확인, 구현됨 (실서버 미검증)
@@ -53,7 +53,7 @@
 | 응답 본문 | `<TR코드>OutBlock`, `<TR코드>OutBlock1` 등 (TR마다 다름) |
 
 - 구현: `src/ls_openapi/client.py` (`LSClient.post_tr`, `build_in_block`). 개별 API(TR 코드, 경로)는 들어 있지 않습니다.
-- `authorization` 값의 `Bearer ` 접두사는 토큰 응답의 `token_type`을 따릅니다. 실서버 확인 전까지 **미검증**입니다.
+- 토큰 응답의 `token_type`은 실서버에서 `Bearer`로 확인했습니다. 다만 `authorization` 헤더에 `Bearer ` 접두사를 붙여 TR을 호출하는 동작은 실제 TR 호출로 확인하지 않아 **미검증**입니다.
 
 ## 국내선물 시세 조회 — 미확인, 미구현
 
@@ -74,7 +74,7 @@
 
 | 항목 | 내용 | 현재 처리 |
 |---|---|---|
-| 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | 두 이름을 모두 허용. 실서버 응답 확인 필요 |
+| 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | **해결**: 실서버 응답은 `expires_in` (2026-10-12). 코드는 두 이름을 모두 허용하되 `expires_in`을 우선 사용 |
 | 시세 호출 예시 | "시작하기"의 주식 현재가 예시는 `GET`, 헤더 `tr_id` 사용. TR 명세 JSON은 `POST`, 헤더 `tr_cd` | TR 명세 JSON을 기준으로 삼음. 예시 코드는 따르지 않음 |
 
 ## 범위 제외

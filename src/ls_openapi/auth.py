@@ -8,9 +8,10 @@
 - 폐기: ``POST {base_url}/oauth2/revoke`` (application/x-www-form-urlencoded)
   ``appkey``, ``appsecretkey``, ``token_type_hint``, ``token``
 
-공식 자료끼리 어긋나는 부분: 유효기간 필드명이 TR 명세 JSON에서는 ``expire_in``,
-"시작하기" 예시 응답에서는 ``expires_in`` 입니다. 실서버 응답으로 확인되기 전까지
-두 이름을 모두 허용합니다.
+공식 자료끼리 어긋나던 부분: 유효기간 필드명이 TR 명세 JSON에서는 ``expire_in``,
+"시작하기" 예시 응답에서는 ``expires_in`` 이었습니다. 2026-10-12 모의투자 키로 실서버를
+호출한 결과 응답 필드는 ``expires_in`` 이었습니다(``access_token``, ``expires_in``,
+``scope``, ``token_type``). 혹시 모를 차이에 대비해 ``expire_in`` 도 함께 허용합니다.
 """
 
 from __future__ import annotations
