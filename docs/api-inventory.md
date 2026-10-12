@@ -13,7 +13,7 @@
 | REST | `https://openapi.ls-sec.co.kr:8080` | 확인 |
 | WebSocket(실전) | `wss://openapi.ls-sec.co.kr:9443` | 확인 (이 저장소에서는 미사용) |
 | WebSocket(모의) | `wss://openapi.ls-sec.co.kr:29443` | 확인 (이 저장소에서는 미사용) |
-| REST(모의투자) | - | **미확인** (TR 명세 JSON에 REST 모의 주소가 없음) |
+| REST(모의투자) | - | **미확인** — 모의투자는 앱키/시크릿키가 별도 발급된다는 것만 명시되어 있고(이용안내), REST 주소는 명시 없음. TR 명세 JSON은 WebSocket에만 모의 주소가 있고 REST는 주소가 하나뿐이라 같은 주소일 수 있으나 **추정**임. [live-testing.md](live-testing.md)로 확인 |
 
 ## 인증
 

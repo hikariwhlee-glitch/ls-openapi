@@ -41,6 +41,8 @@ pytest                      # 실제 서버·계정 없이 실행되는 단위 �
 
 자세한 설명은 [docs/getting-started.md](docs/getting-started.md), 문제가 생기면 [docs/troubleshooting.md](docs/troubleshooting.md)를 보세요.
 
+처음에는 **모의투자 앱키**로 시작하길 권장합니다(실전과 키가 별도로 발급됩니다). 실제 키로 토큰 발급·폐기를 확인하는 방법은 [docs/live-testing.md](docs/live-testing.md)에 있습니다.
+
 ## 구조
 
 ```
