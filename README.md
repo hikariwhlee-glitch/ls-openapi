@@ -51,9 +51,12 @@ pytest                      # 실제 서버·계정 없이 실행되는 단위 �
 src/ls_openapi/
   config.py        # 환경변수/.env 에서 설정 로딩 (키는 repr 에 노출되지 않음)
   auth.py          # 접근토큰 발급·폐기, 토큰 재사용(TokenManager)
-  client.py        # TR 공통 호출 (헤더, InBlock 본문, 연속조회 값)
-  futureoption.py  # 선물/옵션 시세 (t2111 현재가)
-  orders.py        # 선물/옵션 정상주문 (CFOAT00100), 가격 전략 없음
+  client.py        # TR 공통 호출 (헤더, InBlock 본문)
+  tr/
+    market_data/
+      t2111.py     # 선물/옵션 현재가 조회
+    orders/
+      CFOAT00100.py # 선물/옵션 정상주문, 가격 전략 없음
   exceptions.py    # 예외 클래스
 examples/domestic_futureoption/   # 인증·시세·주문 독립 실행 예제
 docs/                             # 시작하기, API 목록, 문제 해결, 주문
