@@ -34,5 +34,8 @@ def test_live_account_balance():
             print("[블록] {}: 필드 {}".format(name, ", ".join(sorted(value))))
         elif isinstance(value, list):
             print("[블록] {}: {}행".format(name, len(value)))
-    assert isinstance(response.body, dict)
-    assert body.get("rsp_cd") is not None
+    # 응답을 받았다는 것만으로는 성공이 아닙니다. 모의투자는 이 업무를 제공하지 않아
+    # rsp_cd=01900 이 올 수 있습니다(2026-10-14 관측). 그 경우는 실패로 처리합니다.
+    assert body.get("rsp_cd") == "00000", "잔고 조회 실패: {} / {}".format(
+        body.get("rsp_cd"), body.get("rsp_msg")
+    )
