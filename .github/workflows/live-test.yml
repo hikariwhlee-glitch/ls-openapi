@@ -32,6 +32,7 @@ jobs:
           # 선택: Settings > Variables 에 LS_BASE_URL 을 등록하면 REST 주소를 바꿀 수 있습니다.
           LS_BASE_URL: ${{ vars.LS_BASE_URL }}
           # t2111 시세 조회 테스트용 종목코드. Settings > Variables 에 LS_FOCODE 를 등록하세요.
+          # 쉼표로 여러 코드를 넣을 수 있고(예: A016C000,A016C), 하나라도 성공하면 통과합니다.
           # 비어 있으면 시세 조회 테스트만 건너뜁니다.
           LS_FOCODE: ${{ vars.LS_FOCODE }}
         run: pytest -s -v tests/live

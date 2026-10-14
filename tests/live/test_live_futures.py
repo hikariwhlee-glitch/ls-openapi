@@ -2,10 +2,14 @@
 
 기본 ``pytest`` 에서는 건너뜁니다. 다음 두 가지가 모두 필요합니다.
 
-    LS_LIVE_TEST=1                  실서버 테스트 허용
-    LS_FOCODE=<선물/옵션 종목코드>   조회할 종목코드 (없으면 이 테스트만 건너뜀)
+    LS_LIVE_TEST=1                          실서버 테스트 허용
+    LS_FOCODE=<종목코드>[,<종목코드>...]      조회할 종목코드 (없으면 이 테스트만 건너뜀)
 
-    LS_LIVE_TEST=1 LS_FOCODE=... pytest -s tests/live/test_live_futures.py
+    LS_LIVE_TEST=1 LS_FOCODE=A016C000,A016C pytest -s tests/live/test_live_futures.py
+
+``LS_FOCODE`` 에 쉼표로 여러 코드를 넣으면 토큰 하나로 차례로 조회합니다. 종목코드 형식
+(5자리/8자리 등)이 확인되지 않았으므로 후보를 함께 넣어 어떤 형식이 통하는지 볼 수 있습니다.
+코드마다 성공/실패를 출력하고, **하나라도 성공하면** 테스트는 통과합니다.
 
 앱키/시크릿키는 ``.env`` 또는 환경변수(LS_APP_KEY, LS_APP_SECRET)로 설정합니다.
 화면에는 앱키, 시크릿키, 토큰 값을 출력하지 않습니다. 응답 구조(블록 이름, 필드 이름)와
@@ -13,15 +17,24 @@
 """
 
 import os
+import time
 
 import pytest
 
-from ls_openapi import AuthError, LSClient, Settings, TokenManager, fetch_current_price
+from ls_openapi import APIError, AuthError, LSClient, Settings, TokenManager, fetch_current_price
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("LS_LIVE_TEST") != "1",
     reason="실서버 테스트는 LS_LIVE_TEST=1 일 때만 실행됩니다",
 )
+
+# TR별 초당 호출 제한이 확인되지 않아, 연속 조회 사이에 여유를 둡니다.
+_PAUSE_BETWEEN_CALLS = 1.1
+
+
+def _focodes():
+    raw = os.environ.get("LS_FOCODE", "")
+    return [code.strip() for code in raw.split(",") if code.strip()]
 
 
 def _short(value, limit=40):
@@ -46,26 +59,48 @@ def _print_structure(body):
 
 
 def test_t2111_current_price_between_issue_and_revoke():
-    focode = os.environ.get("LS_FOCODE", "").strip()
-    if not focode:
+    focodes = _focodes()
+    if not focodes:
         pytest.skip("LS_FOCODE(조회할 선물/옵션 종목코드)가 설정되지 않았습니다")
 
     settings = Settings.from_env()
     manager = TokenManager(settings)
     client = LSClient(settings, token_manager=manager)
 
+    succeeded = []
+    failed = []
     try:
-        response = fetch_current_price(client, focode)
-        print("\n[조회] base_url     :", settings.base_url)
-        print("[조회] focode       :", focode)
-        print("[조회] 응답 tr_cd   :", response.tr_cd)
-        print("[조회] tr_cont      :", response.tr_cont, "/ tr_cont_key:", response.tr_cont_key or "(없음)")
-        _print_structure(response.body)
+        for index, focode in enumerate(focodes):
+            if index:
+                time.sleep(_PAUSE_BETWEEN_CALLS)
+            print("\n[조회] base_url     :", settings.base_url)
+            print("[조회] focode       :", focode)
+            try:
+                response = fetch_current_price(client, focode)
+            except APIError as exc:
+                failed.append(focode)
+                print("[조회] 실패         :", exc)
+                continue
+            succeeded.append(focode)
+            print("[조회] 응답 tr_cd   :", response.tr_cd)
+            print(
+                "[조회] tr_cont      :",
+                response.tr_cont,
+                "/ tr_cont_key:",
+                response.tr_cont_key or "(없음)",
+            )
+            _print_structure(response.body)
     finally:
         try:
             result = manager.revoke()
-            print("[폐기] code/message :", (result or {}).get("code"), "/", (result or {}).get("message"))
+            print(
+                "\n[폐기] code/message :",
+                (result or {}).get("code"),
+                "/",
+                (result or {}).get("message"),
+            )
         except AuthError as exc:
-            print("[폐기] 실패:", exc)
+            print("\n[폐기] 실패:", exc)
 
-    assert isinstance(response.body, dict)
+    print("[요약] 성공:", succeeded or "(없음)", "/ 실패:", failed or "(없음)")
+    assert succeeded, "모든 종목코드 조회가 실패했습니다: {}".format(failed)
