@@ -1,6 +1,6 @@
 # 시작하기
 
-설치부터 접근토큰 발급까지 따라 하는 안내입니다. 국내선물 시세 조회는 공식 TR 명세 확인 후 추가됩니다 ([api-inventory.md](api-inventory.md) 참고).
+설치부터 접근토큰 발급, 선물/옵션 현재가 조회와 실시간 시세 구독까지 안내합니다.
 
 ## 1. LS증권 OPEN API 신청
 
@@ -93,6 +93,14 @@ python examples/domestic_futureoption/02_futures_price.py <종목코드>
 - 서버가 돌려준 JSON을 그대로 출력합니다. 응답 필드의 의미는 아직 정리되지 않았습니다.
 - 종목코드는 8자리(예: `A016C000`)로 실서버 확인했습니다. 5자리는 오류 없이 값이 모두 0인 응답이 옵니다. 월물은 만기가 지나면 쓸 수 없으니 현재 거래 중인 코드인지 확인하세요 ([api-inventory.md](api-inventory.md) 참고).
 
-## 다음 단계
+## 8. 선물 KOSPI200 실시간 시세 (WebSocket)
 
-종목코드를 조회하는 마스터 TR, 호가(`t2112`) 등은 공식 TR 명세를 확인한 뒤 `examples/domestic_futureoption/`에 추가됩니다.
+모의투자 WebSocket 서버를 기본으로 KOSPI200 선물 체결(`FC9`)과 호가(`FH9`)를 구독합니다.
+
+```bash
+python examples/domestic_futureoption/04_futures_realtime.py A016C000 A0173000 A0176000 A0179000
+```
+
+실전 서버는 `--live`를 명시해야 합니다. 이 예제는 시세만 구독하며 주문을 보내지 않습니다. 구독 프레임과 응답 필드는 [websocket.md](websocket.md)를 참고하세요.
+
+모의투자 시세 스트림 연결은 장중에 확인해야 합니다. 연결만 성공했다고 구독 성공으로 판단하지 말고, 서버의 구독 응답과 FC9/FH9 데이터를 확인하세요.
