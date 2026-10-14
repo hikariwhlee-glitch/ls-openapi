@@ -18,16 +18,15 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 
 | 기능 | 상태 |
 |---|---|
-| 접근토큰 발급 (`POST /oauth2/token`) | 구현됨 (mock 테스트 통과, 모의투자 키로 실서버 확인) |
-| 접근토큰 폐기 (`POST /oauth2/revoke`) | 구현됨 (mock 테스트 통과, 모의투자 키로 실서버 확인) |
+| 접근토큰 발급 (`POST /oauth2/token`) | 구현됨 (모의투자 키로 실서버 확인) |
+| 접근토큰 폐기 (`POST /oauth2/revoke`) | 구현됨 (모의투자 키로 실서버 확인) |
 | TR 공통 호출 클라이언트 (헤더·InBlock·연속조회 값) | 구현됨 (개별 API는 포함하지 않음, `t2111` 모의투자 실서버 호출로 검증) |
-| 선물/옵션 현재가 조회 (`t2111`) | 구현·mock 테스트·모의투자 실서버 조회 확인 (현재 상장된 네 월물, 8자리 코드). 응답은 원본 JSON으로 반환 |
+| 선물/옵션 현재가 조회 (`t2111`) | 구현·모의투자 실서버 조회 확인 (현재 상장된 네 월물, 8자리 코드). 응답은 원본 JSON으로 반환 |
 | 그 밖의 시세 (호가, 멀티 현재가, 종목코드 마스터 등) | **보류** — TR은 공식 목록에서 확인, 경로와 요청·응답 필드 명세 확인 필요 |
-| 선물/옵션 정상주문 (`CFOAT00100`) | 기능 모듈 구현, mock 검증 및 모의투자에서 네 월물 주문 접수 응답 확인. 호출하면 주문 제출 |
-| 선물/옵션 잔고 조회 (`CFOAQ50600`) | 사용자 제공 샘플 기반 구현. 실서버 조회는 아직 미검증 |
+| 선물/옵션 정상주문 (`CFOAT00100`) | 기능 모듈 구현, 모의투자에서 네 월물 주문 접수 응답 확인. 호출하면 주문 제출 |
 | 정정·취소 주문 | 범위 제외 |
 
-명세 확인 상태와 실서버 관측 결과는 [docs/api-inventory.md](docs/api-inventory.md)에 있습니다. 주문 요청은 [docs/orders.md](docs/orders.md), 잔고 조회는 [docs/balance.md](docs/balance.md)를 참고하세요. [2026-10-14 Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211)에서 토큰 발급·폐기와 현재 상장된 네 월물의 `t2111` 조회가 통과했습니다.
+명세 확인 상태와 실서버 관측 결과는 [docs/api-inventory.md](docs/api-inventory.md)에 있습니다. 주문 요청은 [docs/orders.md](docs/orders.md)를 참고하세요. [2026-10-14 Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211)에서 토큰 발급·폐기와 현재 상장된 네 월물의 `t2111` 조회가 통과했습니다.
 
 ## 시작하기
 
@@ -35,16 +34,15 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 git clone https://github.com/hikariwhlee-glitch/ls-openapi.git
 cd ls-openapi
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e .
 
 cp .env.example .env        # 앱키/시크릿키 입력 (Windows: copy)
 python examples/domestic_futureoption/01_issue_token.py
-pytest                      # 실제 서버·계정 없이 실행되는 단위 테스트
 ```
 
 자세한 설명은 [docs/getting-started.md](docs/getting-started.md), 문제가 생기면 [docs/troubleshooting.md](docs/troubleshooting.md)를 보세요.
 
-처음에는 **모의투자 앱키**로 시작하길 권장합니다(실전과 키가 별도로 발급됩니다). 실제 키로 토큰 발급·폐기를 확인하는 방법은 [docs/live-testing.md](docs/live-testing.md)에 있습니다.
+처음에는 **모의투자 앱키**로 시작하길 권장합니다(실전과 키가 별도로 발급됩니다). 모의투자도 REST 주소는 기본값(`https://openapi.ls-sec.co.kr:8080`)을 씁니다(실서버 확인).
 
 ## 구조
 
@@ -60,8 +58,7 @@ src/ls_openapi/
       CFOAT00100.py # 선물/옵션 정상주문, 가격 전략 없음
   exceptions.py    # 예외 클래스
 examples/domestic_futureoption/   # 인증·시세·주문 독립 실행 예제
-docs/                             # 시작하기, API 목록, 문제 해결, 주문, 잔고 조회
-tests/                            # mock 응답 기반 단위 테스트
+docs/                             # 시작하기, API 목록, 문제 해결, 주문
 ```
 
 ## 보안 원칙
@@ -70,7 +67,6 @@ tests/                            # mock 응답 기반 단위 테스트
 - 인증정보는 환경변수 또는 로컬 `.env` 파일로만 읽습니다. `.env`는 `.gitignore`에 포함되어 있습니다.
 - 오류 메시지와 `repr`에는 앱키, 시크릿키, 토큰 값이 출력되지 않도록 처리했습니다.
 - 키가 유출되었다면 LS증권 포털에서 사용해지 후 재등록해야 하며, 이 경우 기존 토큰은 만료됩니다.
-- 단위 테스트는 실제 API 서버나 계정 없이 실행됩니다.
 
 ## 참고 자료
 
