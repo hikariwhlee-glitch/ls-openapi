@@ -4,8 +4,8 @@ LS증권 선물/옵션 정상주문 TR `CFOAT00100`를 `submit_futures_option_or
 
 ## 기능 구성
 
-- 시세 조회: `fetch_current_price(client, focode)` — `src/ls_openapi/futureoption.py`
-- 신규 주문: `submit_futures_option_order(...)` — `src/ls_openapi/orders.py`
+- 시세 조회: `fetch_current_price(client, focode)` — `src/ls_openapi/tr/market_data/t2111.py`
+- 신규 주문: `submit_futures_option_order(...)` — `src/ls_openapi/tr/orders/CFOAT00100.py`
 - 공통 인증/HTTP: `TokenManager` 및 `LSClient` — `auth.py`, `client.py`
 - 모의투자 시세+주문 통합 시나리오와 현재가 + 1틱 가격 선택은 라이브 테스트(`tests/live/test_live_order.py`)에만 둡니다. 주문 API 함수는 이 테스트 가격 규칙을 적용하지 않습니다.
 
