@@ -53,9 +53,10 @@ src/ls_openapi/
   auth.py          # 접근토큰 발급·폐기, 토큰 재사용(TokenManager)
   client.py        # TR 공통 호출 (헤더, InBlock 본문, 연속조회 값)
   futureoption.py  # 선물/옵션 시세 (t2111 현재가)
+  orders.py        # 선물/옵션 정상주문 (CFOAT00100)
   exceptions.py    # 예외 클래스
 examples/domestic_futureoption/   # 독립 실행 예제
-docs/                             # 시작하기, API 목록, 문제 해결
+docs/                             # 시작하기, API 목록, 문제 해결, 주문
 tests/                            # mock 응답 기반 단위 테스트
 ```
 
