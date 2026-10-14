@@ -72,7 +72,7 @@ def main(argv) -> int:
     print("TR: {}".format(response.tr_cd))
     print("응답코드: {}".format(body.get("rsp_cd", "(없음)")))
     print("응답메시지: {}".format(body.get("rsp_msg", "(없음)")))
-    print("응답 필드명: {}".format(", ".join(sorted(body)))
+    print("응답 필드명: {}".format(", ".join(sorted(body))))
     return 0
 
 
