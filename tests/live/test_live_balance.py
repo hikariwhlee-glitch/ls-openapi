@@ -35,12 +35,25 @@ def test_cfoaq50600_balance_inquiry():
         response = fetch_futures_option_balance(client, order_date=order_date)
         body = response.body if isinstance(response.body, dict) else {}
         response_code = body.get("rsp_cd")
-        # 값은 노출하지 않고, 성공 여부와 구조의 키만 확인합니다.
+        # 잔고 데이터와 서버의 원문 메시지는 출력하지 않고 오류 종류만 분류합니다.
         print("[잔고 조회] TR:", response.tr_cd)
         print("[잔고 조회] 날짜:", order_date)
         print("[잔고 조회] 응답코드:", response_code)
         print("[잔고 조회] 최상위 필드명:", sorted(body))
         assert response.tr_cd == "CFOAQ50600", "응답 TR 코드가 요청과 다릅니다."
+        if response_code != "00000":
+            message = str(body.get("rsp_msg") or "")
+            if any(word in message for word in ("일자", "날짜", "기간")):
+                category = "조회일 조건 확인 필요"
+            elif any(word in message for word in ("입력", "코드", "구분")):
+                category = "입력값 또는 구분코드 확인 필요"
+            elif any(word in message for word in ("계좌", "권한", "신청", "등록")):
+                category = "계좌 권한 또는 서비스 신청 확인 필요"
+            elif any(word in message for word in ("자료", "내역", "없")):
+                category = "조회 대상 자료 유무 확인 필요"
+            else:
+                category = "미분류 서버 오류 (원문은 로그에 기록하지 않음)"
+            print("[잔고 조회] 오류 분류:", category)
         assert response_code == "00000", "잔고 조회 성공 응답 코드가 아닙니다."
     except APIError as exc:
         # 예외 메시지에는 서버 응답이 포함될 수 있어 출력하지 않습니다.
