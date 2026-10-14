@@ -88,9 +88,9 @@ class LSWebSocketClient:
             raise WebSocketError(
                 "LS증권 WebSocket 수신에 실패했습니다 ({}).".format(type(exc).__name__)
             ) from exc
-        if isinstance(raw, bytes):
-            raw = raw.decode("utf-8")
         try:
+            if isinstance(raw, bytes):
+                raw = raw.decode("utf-8")
             message = json.loads(raw)
         except (TypeError, ValueError, UnicodeDecodeError) as exc:
             raise WebSocketError("WebSocket 응답이 JSON 형식이 아닙니다.") from exc
