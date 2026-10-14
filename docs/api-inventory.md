@@ -119,7 +119,7 @@
 
 ### 이 저장소 범위 밖 (코드만 기록)
 
-- **계좌 (13개)**: `CFOAQ00600`, `CFOAQ10100`, `CFOBQ10500`, `CFOEQ11100`, `CFOEQ82600`, `CFOFQ02400`, `t0434`, `t0441`, `CCENQ10100`, `CCENQ30100`, `CCENQ90200`, `FOCCQ33700`, `CFOBQ10800`
+- **계좌 (14개)**: `CFOAQ00600`, `CFOAQ50600`, `CFOAQ10100`, `CFOBQ10500`, `CFOEQ11100`, `CFOEQ82600`, `CFOFQ02400`, `t0434`, `t0441`, `CCENQ10100`, `CCENQ30100`, `CCENQ90200`, `FOCCQ33700`, `CFOBQ10800`
 - **주문**: `CFOAT00100` 정상주문은 아래에 구현·확인 상태를 기록합니다. `CFOAT00200` 정정, `CFOAT00300` 취소, `CCENT00100`/`CCENT00200`/`CCENT00300` KRX야간파생 주문은 미구현입니다.
 - **기타 (1개)**: `MMDAQ91200`(파생상품증거금율조회)
 - **실시간 시세 (31개, WebSocket)**: `C01`, `CD0`, `FC9`, `FD0`, `FH9`, `H01`, `FX9`, `JC0`, `JD0`, `JH0`, `JX0`, `O01`, `OC0`, `OD0`, `OH0`, `OMG`, `OX0`, `YC3`, `YF9`, `YJC`, `YOC`, `DC0`, `O02`, `C02`, `DH0`, `H02`, `DD0`, `DX0`, `DYC`, `DBM`, `DBT` (코드별 이름은 기록하지 않았습니다)
@@ -144,9 +144,9 @@
 | 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)은 후보이며 실제 종목코드 조회는 확인하지 않았습니다. | 미확인 |
 
 - 구현: `src/ls_openapi/tr/market_data/t2111.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
-- 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
-- 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. 재실행에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
-- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
+- 검증 방식: 모의투자 키로 실서버를 호출했고, 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우만 성공으로 봤습니다. 자동 테스트 코드는 저장소에서 제거했습니다.
+- 최신 검증: 2026-10-14 모의투자 실서버 호출에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
+- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기).
 
 ## 그 밖의 시세 후보 — 명세 미확인, 미구현
 
@@ -173,27 +173,9 @@
 
 - 구현: `src/ls_openapi/tr/orders/CFOAT00100.py`의 `submit_futures_option_order`. 사용자가 넘긴 가격·수량·코드로 주문 TR만 호출하며 현재가 조회, 틱 계산, 매매 결정 로직은 포함하지 않습니다.
 - 예제: `examples/domestic_futureoption/03_futures_option_order.py`. 명령행에서 종목·코드·가격·수량을 직접 지정합니다.
-- 테스트에서 현재가 + 1틱 가격을 만들던 로직은 `tests/live/test_live_order.py`에 한정합니다.
 - 주문 요청은 자동 재시도하지 않습니다. 함수 사용법과 제한은 [docs/orders.md](orders.md)를 참고하세요.
-## 선물옵션 계좌잔고 및 평가현황3 `CFOAQ50600` — 구현, 실서버 미검증
-
-공식 포털 API 서비스 목록에서 TR 코드와 이름을 확인했습니다. 경로와 입력 필드는 사용자가 제공한 호출 샘플을 기준으로 구성했으며, 공식 상세 스키마와 입력 코드값 의미는 대조하지 못했습니다.
-
-| 항목 | 내용 | 상태 |
-|---|---|---|
-| TR / API명 | `CFOAQ50600`, 선물옵션 계좌잔고 및 평가현황3 | 공식 포털 목록에서 코드·이름 확인 |
-| 경로 | `POST /futureoption/accno` | 사용자 제공 샘플 기준 |
-| 요청 블록 | `CFOAQ50600InBlock1` | 사용자 제공 샘플 기준 |
-| 입력 필드 | `RecCnt`, `OrdDt`, `BalEvalTp`, `FutsPrcEvalTp`, `LqtQtyQryTp` | 샘플 기준 |
-| 기본 코드값 | `BalEvalTp=1`, `FutsPrcEvalTp=1`, `LqtQtyQryTp=1` | 샘플 기준, 의미 미확인 |
-| 응답 및 조회 결과 | 계좌 응답 데이터와 실서버 반환값 | 조회 미실행, 미검증 |
-
-- 구현: `src/ls_openapi/tr/account/CFOAQ50600.py`의 `fetch_futures_option_balance`. 서버 응답은 `TRResponse.body`로 반환됩니다.
-- 예제: `examples/domestic_futureoption/04_futures_option_balance.py YYYYMMDD`. 민감정보 노출을 피하기 위해 전체 응답 본문을 출력하지 않습니다.
-- 자세한 내용은 [잔고 조회](balance.md)를 참고하세요.
-
 ## 범위 제외
 
-- 정정·취소 주문 API 및 계좌 주문가능수량 조회.
+- 정정·취소 주문 API, 계좌 잔고·주문가능수량 조회 등 계좌 TR.
 - 실시간(WebSocket) 시세: MVP 범위가 아닙니다.
 - 업종, ELW, 주식, 해외 등 국내선물 외 API
