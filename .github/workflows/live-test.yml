@@ -4,6 +4,11 @@ name: live-auth-test (수동 실행)
 # 자동 실행(push, pull_request)에는 연결하지 않고, Actions 탭에서 직접 실행할 때만 동작합니다.
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: "실행할 pytest 대상 (예: tests/live/test_live_account.py). 비우면 tests/live 전체"
+        required: false
+        default: "tests/live"
 
 permissions:
   contents: read
@@ -35,4 +40,4 @@ jobs:
           # 쉼표로 여러 코드를 넣을 수 있고(예: A016C000,A016C), 하나라도 성공하면 통과합니다.
           # 비어 있으면 시세 조회 테스트만 건너뜁니다.
           LS_FOCODE: ${{ vars.LS_FOCODE }}
-        run: pytest -s -v tests/live
+        run: pytest -s -v ${{ inputs.target || 'tests/live' }}

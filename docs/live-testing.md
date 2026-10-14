@@ -67,3 +67,12 @@ $env:LS_LIVE_TEST="1"; pytest -s tests/live    # Windows PowerShell
 ## 문제가 생기면
 
 [troubleshooting.md](troubleshooting.md)를 보세요. 실서버 테스트가 실패하면 오류 메시지의 HTTP 상태와 서버 메시지(키는 가려져 있습니다)가 단서입니다.
+
+## 실전 계좌 잔고 조회 (`CFOAQ50600`)
+
+이 TR은 모의투자에서 `rsp_cd=01900`(해당업무 미제공)이라 실전 키로만 확인할 수 있습니다. 모의투자 키와 섞이지 않도록 별도 워크플로 `live-balance-real.yml`을 씁니다.
+
+1. Settings > Environments 에서 `live-real` 환경을 만들고, Required reviewers 와 배포 가능 브랜치를 제한합니다.
+2. 그 환경의 Secrets 에 **실전** `LS_APP_KEY`, `LS_APP_SECRET` 을 등록합니다. 저장소 단위 시크릿(모의투자)은 건드리지 않습니다.
+3. Actions > live-balance-real 에서 `confirm` 에 `REAL` 을 입력해 실행합니다. 잔고 조회 한 건만 실행하고 주문은 나가지 않습니다.
+4. 공개 로그에는 응답코드와 필드 이름만 남습니다. 확인을 마치면 환경의 실전 키는 지우거나 필요 시에만 두세요.

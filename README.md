@@ -24,6 +24,7 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 | 선물/옵션 현재가 조회 (`t2111`) | 구현·mock 테스트·모의투자 실서버 조회 확인 (현재 상장된 네 월물, 8자리 코드). 응답은 원본 JSON으로 반환 |
 | 그 밖의 시세 (호가, 멀티 현재가, 종목코드 마스터 등) | **보류** — TR은 공식 목록에서 확인, 경로와 요청·응답 필드 명세 확인 필요 |
 | 선물/옵션 정상주문 (`CFOAT00100`) | 기능 모듈 구현, mock 검증 및 모의투자에서 네 월물 주문 접수 응답 확인. 호출하면 주문 제출 |
+| 선물옵션 계좌잔고 (`CFOAQ50600`) | 구현, mock 검증. 호출 샘플 기준. 모의투자는 `rsp_cd=01900`(해당업무 미제공)이라 실전에서만 확인 가능, 응답 필드는 미확인. 값은 출력하지 않음 |
 | 정정·취소 주문 | 범위 제외 |
 
 명세 확인 상태와 실서버 관측 결과는 [docs/api-inventory.md](docs/api-inventory.md)에 있습니다. 주문 요청은 [docs/orders.md](docs/orders.md)를 참고하세요. [2026-10-14 Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211)에서 토큰 발급·폐기와 현재 상장된 네 월물의 `t2111` 조회가 통과했습니다.
@@ -57,6 +58,8 @@ src/ls_openapi/
       t2111.py     # 선물/옵션 현재가 조회
     orders/
       CFOAT00100.py # 선물/옵션 정상주문, 가격 전략 없음
+    account/
+      CFOAQ50600.py # 선물옵션 계좌잔고 및 평가현황
   exceptions.py    # 예외 클래스
 examples/domestic_futureoption/   # 인증·시세·주문 독립 실행 예제
 docs/                             # 시작하기, API 목록, 문제 해결, 주문

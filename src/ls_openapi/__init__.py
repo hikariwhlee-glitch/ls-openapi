@@ -9,6 +9,7 @@ from .exceptions import (
     ConfigError,
     LSOpenAPIError,
 )
+from .tr.account.CFOAQ50600 import fetch_account_balance
 from .tr.market_data.t2111 import fetch_current_price
 from .tr.orders.CFOAT00100 import submit_futures_option_order
 
@@ -26,6 +27,7 @@ __all__ = [
     "TRResponse",
     "TokenManager",
     "build_in_block",
+    "fetch_account_balance",
     "fetch_current_price",
     "issue_token",
     "revoke_token",
