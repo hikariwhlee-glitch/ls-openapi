@@ -40,7 +40,7 @@
 - 응답 필드(실서버 확인): `code`, `message`. 성공 시 `code`는 `200`, `message`는 "접근토큰 폐기에 성공하였습니다."였습니다(1회 관측). 실패 시의 `code` 값은 확인하지 않았고, 코드는 응답을 해석하지 않고 그대로 반환합니다.
 - 구현: `src/ls_openapi/auth.py` (`revoke_token`, `TokenManager.revoke`)
 
-## TR 호출 공통 규칙 — 확인, 구현됨 (실서버 미검증)
+## TR 호출 공통 규칙 — 확인, 구현됨 (`t2111` 모의투자 실서버 확인)
 
 업종 시세(`/indtp/market-data`) 등 REST TR 명세에서 공통으로 확인된 형식입니다. 국내선물 TR에도 같은 형식이 적용될 것으로 보이지만, 해당 TR 명세를 직접 확인하기 전까지는 가정입니다.
 
@@ -53,7 +53,7 @@
 | 응답 본문 | `<TR코드>OutBlock`, `<TR코드>OutBlock1` 등 (TR마다 다름) |
 
 - 구현: `src/ls_openapi/client.py` (`LSClient.post_tr`, `build_in_block`). 개별 API(TR 코드, 경로)는 들어 있지 않습니다.
-- 토큰 응답의 `token_type`은 실서버에서 `Bearer`로 확인했습니다. 다만 `authorization` 헤더에 `Bearer ` 접두사를 붙여 TR을 호출하는 동작은 실제 TR 호출로 확인하지 않아 **미검증**입니다.
+- 토큰 응답의 `token_type`은 실서버에서 `Bearer`로 확인했습니다. `authorization: Bearer <토큰>` 호출도 `t2111` 모의투자 실서버에서 확인했습니다 (2026-10-14). 다른 TR의 동작까지 확인한 것은 아닙니다.
 
 ## 국내선물옵션 TR 목록
 
@@ -124,26 +124,28 @@
 - **기타 (1개)**: `MMDAQ91200`(파생상품증거금율조회)
 - **실시간 시세 (31개, WebSocket)**: `C01`, `CD0`, `FC9`, `FD0`, `FH9`, `H01`, `FX9`, `JC0`, `JD0`, `JH0`, `JX0`, `O01`, `OC0`, `OD0`, `OH0`, `OMG`, `OX0`, `YC3`, `YF9`, `YJC`, `YOC`, `DC0`, `O02`, `C02`, `DH0`, `H02`, `DD0`, `DX0`, `DYC`, `DBM`, `DBT` (코드별 이름은 기록하지 않았습니다)
 
-## 선물/옵션 현재가(시세)조회 `t2111` — 구현됨 (요청만), 실서버 미검증
+## 선물/옵션 현재가(시세)조회 `t2111` — 구현·모의투자 실서버 확인
 
-근거: 사용자가 제공한 `t2111` 호출 샘플입니다. 공식 TR 명세 원문이 아니라 **샘플**이라서 아래 "샘플 기준"으로 표시한 항목은 명세 원문과 대조하지 못했습니다.
+근거: 공식 포털 API 서비스 목록에서 TR 코드와 API명을 확인하고, 엔드포인트·요청 형식은 제공받은 호출 샘플을 기준으로 구현했습니다. 샘플은 공식 TR 명세 원문이 아니므로 필드의 공식 정의와 호출 제한은 여전히 확인이 필요합니다.
 
 | 항목 | 내용 | 상태 |
 |---|---|---|
 | API명 | 선물/옵션현재가(시세)조회 | 확인 (공식 API 서비스 페이지) |
-| 엔드포인트 | `POST https://openapi.ls-sec.co.kr:8080/futureoption/market-data` | 샘플 기준 |
-| 요청 헤더 | `content-type`(`application/json; charset=utf-8`), `authorization`(`Bearer <토큰>`), `tr_cd`(`t2111`), `tr_cont`(`N`), `tr_cont_key`(빈 문자열), `mac_address`(샘플은 빈 값, 법인만 필수) | 샘플 기준 |
-| 요청 본문 | `{"t2111InBlock": {"focode": "<종목코드>"}}` | 샘플 기준 |
-| `focode` | 선물/옵션 종목코드. 샘플 값은 8자리 `A0166000`이지만 **현재 거래 중인 코드인지 알 수 없어** 코드에 넣지 않았습니다. 코스피200선물을 `A016C`처럼 5자리로 부르는 경우가 있어, 요청에 5자리와 8자리 중 무엇을 넣어야 하는지 | 형식·유효 범위 **미확인** (실서버 테스트로 확인 예정) |
-| 응답 OutBlock 구조 | 샘플에 없음 | **미확인** |
-| 초당 호출 제한 | 샘플에 없음 | **미확인** |
-| 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)을 쓸 것으로 **추정**, 명세 미확인 | 미확인 |
-| `Bearer` 접두사 동작 | 토큰 발급 응답의 `token_type`은 `Bearer`로 확인. 실제 TR 호출로는 아직 확인하지 않음 | **미검증** |
+| 엔드포인트 | `POST https://openapi.ls-sec.co.kr:8080/futureoption/market-data` | 샘플 기반 구현, 모의투자 실서버 호출 성공 (2026-10-14) |
+| 요청 헤더 | `content-type`(`application/json; charset=utf-8`), `authorization`(`Bearer <토큰>`), `tr_cd`(`t2111`), `tr_cont`(`N`), `tr_cont_key`(빈 문자열) | 샘플 기반, 실서버 호출 성공 |
+| 요청 본문 | `{"t2111InBlock": {"focode": "<종목코드>"}}` | 샘플 기반, 실서버 호출 성공 |
+| `focode` | 8자리 종목코드가 맞습니다. `A016C000`으로 현재가 조회 및 반환 종목 확인에 성공했습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 5자리 코드 | `A016C`는 HTTP/TR 오류 없이 응답했지만 `t2111OutBlock.focode`가 비어 있고 시세 필드가 0이었습니다. 유효한 종목 조회로 보지 않습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 응답 구조 | 최상위 `rsp_cd`, `rsp_msg`, `t2111OutBlock`. 성공 응답은 `rsp_cd=00000`, `rsp_msg=조회완료`; OutBlock에 요청 종목코드와 시세 필드가 포함됩니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 연속조회 응답 헤더 | `tr_cd=t2111`, `tr_cont=N`, `tr_cont_key=0` | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 필드 의미·자료형 | 응답 필드명과 샘플 값은 관측했지만 공식 필드 정의와 자료형은 대조하지 못했습니다. | 미확인 |
+| 초당 호출 제한 | 공식 명세나 실서버로 확인하지 않았습니다. | 미확인 |
+| 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)은 후보이며 실제 종목코드 조회는 확인하지 않았습니다. | 미확인 |
 
-- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다. 필드를 임의로 만들어 넣지 않기 위해서입니다.
-- 테스트: mock 단위 테스트(`tests/test_futureoption.py`). 응답 필드 이름은 가짜 값만 씁니다.
-- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기).
-- 실서버 검증: `tests/live/test_live_futures.py`가 응답 구조(블록 이름, 필드 이름, 값)를 출력합니다. 이 출력으로 OutBlock 구조를 확인해 이 표를 채웁니다. 사용법은 [live-testing.md](live-testing.md) 참고.
+- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
+- 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
+- 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. `A016C000`은 조회 성공, 5자리 `A016C`는 데이터 없는 응답으로 구분했습니다.
+- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
 
 ## 그 밖의 시세 후보 — 명세 미확인, 미구현
 
