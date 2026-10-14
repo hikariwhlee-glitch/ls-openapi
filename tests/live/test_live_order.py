@@ -1,10 +1,9 @@
-"""모의투자에서 네 KOSPI 200 선물 월물을 조회하고 각 1계약 매수 주문을 냅니다.
+"""모의투자에서 아직 제출하지 않은 KOSPI 200 선물 월물 3종에 각 1계약 매수 주문을 냅니다.
 
-main의 live-test 워크플로를 codex/document-live-t2111-verified ref로 수동 실행한 경우에만
-주문을 전송합니다. LS_LIVE_TEST=1도 함께 필요하며, 일반 pytest나 다른 ref에서는 건너뜁니다.
-종목마다 t2111의 price를 다시 조회하고 KRX 호가 단위 0.05포인트를 더해
-지정가(BnsTpCode=2, FnoOrdprcPtnCode=00) 매수 1계약을 한 번 전송합니다.
-요청 재시도는 없으며, 주문이 체결되거나 미체결 상태로 남을 수 있습니다.
+A016C000은 이전 수동 실행에서 모의투자 주문 접수 응답(rsp_cd=00040)을 받았으므로
+중복 주문을 막기 위해 제외합니다. 이 테스트는 codex 브랜치 수동 Actions 실행에서만
+주문을 전송합니다. 종목마다 t2111 현재가를 다시 조회하고 0.05포인트 높은 지정가로
+1계약 매수를 한 번 전송합니다. 요청 재시도는 하지 않습니다.
 """
 import os
 import time
@@ -28,7 +27,8 @@ pytestmark = pytest.mark.skipif(
     reason="이 실서버 주문은 Codex 브랜치의 수동 Actions 실행에서만 가능합니다",
 )
 
-_CONTRACTS = ("A016C000", "A0173000", "A0176000", "A0179000")
+# A016C000은 이전 실행에서 rsp_cd=00040, 모의투자 매수주문 완료 응답을 받았습니다.
+_CONTRACTS = ("A0173000", "A0176000", "A0179000")
 _TICK_SIZE = Decimal("0.05")
 _PAUSE_BETWEEN_CALLS = 1.1
 
@@ -69,8 +69,19 @@ def _quote_price(client, instrument_code):
     return price, order_price
 
 
-def test_buy_one_contract_for_each_current_month():
-    """현재가 + 1틱으로 네 월물에 지정가 매수 주문을 순차 제출합니다."""
+def _is_successful_order_response(response, body):
+    code = body.get("rsp_cd")
+    message = str(body.get("rsp_msg") or "")
+    simulated_success = (
+        code == "00040" and "모의투자 매수주문이 완료" in message
+    )
+    return response.tr_cd == "CFOAT00100" and (
+        code == "00000" or simulated_success
+    )
+
+
+def test_buy_one_contract_for_each_remaining_month():
+    """남은 세 월물에 현재가 + 1틱으로 지정가 매수 주문을 순차 제출합니다."""
     settings = Settings.from_env()
     manager = TokenManager(settings)
     client = LSClient(settings, token_manager=manager)
@@ -116,14 +127,14 @@ def test_buy_one_contract_for_each_current_month():
                         )
                     )
 
-            if response.tr_cd != "CFOAT00100" or code != "00000":
+            if not _is_successful_order_response(response, body):
                 raise AssertionError(
                     "주문 성공 응답을 확인하지 못해 이후 주문을 중단했습니다 "
                     "(종목={}, rsp_cd={!r}, 앞서 접수된 주문={})".format(
                         instrument_code, code, accepted
                     )
                 )
-            accepted.append((instrument_code, str(order_price)))
+            accepted.append((instrument_code, str(order_price), code))
 
         print("\n[요약] 접수 성공: {}".format(accepted))
     finally:
@@ -138,5 +149,5 @@ def test_buy_one_contract_for_each_current_month():
             print("[토큰 폐기 실패] {}".format(type(exc).__name__))
 
     assert len(accepted) == len(_CONTRACTS), (
-        "네 월물 모두 주문 접수 성공 응답이 필요합니다: {}".format(accepted)
+        "남은 세 월물 모두 주문 접수 성공 응답이 필요합니다: {}".format(accepted)
     )
