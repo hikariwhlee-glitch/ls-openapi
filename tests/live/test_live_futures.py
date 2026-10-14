@@ -3,13 +3,14 @@
 기본 ``pytest`` 에서는 건너뜁니다. 다음 두 가지가 모두 필요합니다.
 
     LS_LIVE_TEST=1                          실서버 테스트 허용
-    LS_FOCODE=<종목코드>[,<종목코드>...]      조회할 종목코드 (없으면 이 테스트만 건너뜀)
+    LS_FOCODE=<8자리>[,<8자리>...]             조회할 선물/옵션 종목코드
 
-    LS_LIVE_TEST=1 LS_FOCODE=A016C000,A016C pytest -s tests/live/test_live_futures.py
+    LS_LIVE_TEST=1 LS_FOCODE=A016C000 pytest -s tests/live/test_live_futures.py
 
-``LS_FOCODE`` 에 쉼표로 여러 코드를 넣으면 토큰 하나로 차례로 조회합니다. 종목코드 형식
-(5자리/8자리 등)이 확인되지 않았으므로 후보를 함께 넣어 어떤 형식이 통하는지 볼 수 있습니다.
-코드마다 성공/실패를 출력하고, **하나라도 성공하면** 테스트는 통과합니다.
+``LS_FOCODE`` 에 쉼표로 여러 코드를 넣으면 토큰 하나로 차례로 조회합니다.
+현재 상장된 4개월물 등 확인할 코드를 GitHub Actions의 `LS_FOCODE` 변수에 쉼표로 등록할 수 있습니다.
+각 응답에서 `rsp_cd=00000`이고 OutBlock의 `focode`가 요청 코드와 일치해야 그 종목을 성공으로 셉니다.
+등록한 코드가 하나라도 조회되지 않으면 테스트가 실패합니다.
 
 앱키/시크릿키는 ``.env`` 또는 환경변수(LS_APP_KEY, LS_APP_SECRET)로 설정합니다.
 화면에는 앱키, 시크릿키, 토큰 값을 출력하지 않습니다. 응답 구조(블록 이름, 필드 이름)와
@@ -81,6 +82,18 @@ def test_t2111_current_price_between_issue_and_revoke():
                 failed.append(focode)
                 print("[조회] 실패         :", exc)
                 continue
+            body = response.body
+            out_block = body.get("t2111OutBlock") if isinstance(body, dict) else None
+            response_code = body.get("rsp_cd") if isinstance(body, dict) else None
+            returned_focode = out_block.get("focode") if isinstance(out_block, dict) else None
+            if response_code != "00000" or returned_focode != focode:
+                failed.append(focode)
+                print(
+                    "[조회] 실패         : 응답 코드/종목 불일치 "
+                    "(rsp_cd={!r}, focode={!r})".format(response_code, returned_focode)
+                )
+                _print_structure(body if isinstance(body, dict) else {"body": body})
+                continue
             succeeded.append(focode)
             print("[조회] 응답 tr_cd   :", response.tr_cd)
             print(
@@ -103,4 +116,7 @@ def test_t2111_current_price_between_issue_and_revoke():
             print("\n[폐기] 실패:", exc)
 
     print("[요약] 성공:", succeeded or "(없음)", "/ 실패:", failed or "(없음)")
-    assert succeeded, "모든 종목코드 조회가 실패했습니다: {}".format(failed)
+    assert not failed and len(succeeded) == len(focodes), (
+        "요청한 모든 종목코드의 유효한 응답이 필요합니다 "
+        "(성공: {}, 실패: {})".format(succeeded, failed)
+    )

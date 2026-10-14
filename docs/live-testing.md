@@ -33,8 +33,9 @@ $env:LS_LIVE_TEST="1"; pytest -s tests/live    # Windows PowerShell
 2. (권장) **Settings → Environments → New environment**에서 `live-test` 환경을 만들고 **Required reviewers**에 본인을 지정합니다. 실행 전에 승인이 필요해집니다.
 3. (선택) 모의투자 REST 주소가 다르다고 확인된 경우에만 **Settings → Secrets and variables → Actions → Variables**에 `LS_BASE_URL`을 등록합니다.
 4. (시세 조회 테스트용) 같은 Variables 화면에 `LS_FOCODE`를 등록합니다. 조회할 선물/옵션 종목코드이며 비밀값이 아니라서 시크릿이 아닌 변수로 둡니다. 등록하지 않으면 시세 조회 테스트만 건너뜁니다.
-   - 쉼표로 여러 코드를 넣으면 토큰 하나로 차례로 조회하고(호출 사이 1.1초 간격), 코드마다 성공/실패를 출력합니다. **하나라도 성공하면** 테스트가 통과합니다.
-   - `focode` 형식(5자리인지 8자리인지)이 확인되지 않았습니다. 처음에는 `A016C000,A016C`처럼 후보를 함께 넣어 어느 쪽이 통하는지 확인하세요.
+   - `focode`는 **8자리**로 실서버 확인했습니다. 5자리 `A016C`는 오류 없이 응답해도 OutBlock의 종목코드가 비어 있고 값이 0이므로 유효 조회로 세지 않습니다.
+   - 쉼표로 여러 8자리 코드를 넣으면 토큰 하나로 차례로 조회합니다(호출 사이 1.1초 간격). 등록한 모든 코드에 대해 `rsp_cd=00000`이고 반환 `focode`가 요청과 일치해야 테스트가 통과합니다.
+   - 2026-10-14 Actions 재실행에서 현재 상장 네 월물 `A016C000`, `A0173000`, `A0176000`, `A0179000`이 모두 유효한 응답을 반환했습니다. 네 코드는 `LS_FOCODE` Actions 변수에 저장되어 있습니다.
 5. **Actions 탭 → live-auth-test (수동 실행) → Run workflow**
 
 워크플로우는 `workflow_dispatch`(수동 실행)로만 동작하며, push나 pull request로는 실행되지 않습니다. 포크한 저장소의 PR에는 시크릿이 전달되지 않습니다.

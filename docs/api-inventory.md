@@ -40,7 +40,7 @@
 - 응답 필드(실서버 확인): `code`, `message`. 성공 시 `code`는 `200`, `message`는 "접근토큰 폐기에 성공하였습니다."였습니다(1회 관측). 실패 시의 `code` 값은 확인하지 않았고, 코드는 응답을 해석하지 않고 그대로 반환합니다.
 - 구현: `src/ls_openapi/auth.py` (`revoke_token`, `TokenManager.revoke`)
 
-## TR 호출 공통 규칙 — 확인, 구현됨 (실서버 미검증)
+## TR 호출 공통 규칙 — 확인, 구현됨 (`t2111` 모의투자 실서버 확인)
 
 업종 시세(`/indtp/market-data`) 등 REST TR 명세에서 공통으로 확인된 형식입니다. 국내선물 TR에도 같은 형식이 적용될 것으로 보이지만, 해당 TR 명세를 직접 확인하기 전까지는 가정입니다.
 
@@ -53,7 +53,7 @@
 | 응답 본문 | `<TR코드>OutBlock`, `<TR코드>OutBlock1` 등 (TR마다 다름) |
 
 - 구현: `src/ls_openapi/client.py` (`LSClient.post_tr`, `build_in_block`). 개별 API(TR 코드, 경로)는 들어 있지 않습니다.
-- 토큰 응답의 `token_type`은 실서버에서 `Bearer`로 확인했습니다. 다만 `authorization` 헤더에 `Bearer ` 접두사를 붙여 TR을 호출하는 동작은 실제 TR 호출로 확인하지 않아 **미검증**입니다.
+- 토큰 응답의 `token_type`은 실서버에서 `Bearer`로 확인했습니다. `authorization: Bearer <토큰>` 호출도 `t2111` 모의투자 실서버에서 확인했습니다 (2026-10-14). 다른 TR의 동작까지 확인한 것은 아닙니다.
 
 ## 국내선물옵션 TR 목록
 
@@ -120,30 +120,33 @@
 ### 이 저장소 범위 밖 (코드만 기록)
 
 - **계좌 (14개)**: `CFOAQ00600`, `CFOAQ50600`, `CFOAQ10100`, `CFOBQ10500`, `CFOEQ11100`, `CFOEQ82600`, `CFOFQ02400`, `t0434`, `t0441`, `CCENQ10100`, `CCENQ30100`, `CCENQ90200`, `FOCCQ33700`, `CFOBQ10800`
-- **주문 (6개)**: `CFOAT00100`(정상주문), `CFOAT00200`(정정주문), `CFOAT00300`(취소주문), `CCENT00100`, `CCENT00200`, `CCENT00300`(KRX야간파생 위탁 신규·정정·취소). **MVP에서 구현하지 않습니다.**
+- **주문**: `CFOAT00100` 정상주문은 아래에 구현·확인 상태를 기록합니다. `CFOAT00200` 정정, `CFOAT00300` 취소, `CCENT00100`/`CCENT00200`/`CCENT00300` KRX야간파생 주문은 미구현입니다.
 - **기타 (1개)**: `MMDAQ91200`(파생상품증거금율조회)
 - **실시간 시세 (31개, WebSocket)**: `C01`, `CD0`, `FC9`, `FD0`, `FH9`, `H01`, `FX9`, `JC0`, `JD0`, `JH0`, `JX0`, `O01`, `OC0`, `OD0`, `OH0`, `OMG`, `OX0`, `YC3`, `YF9`, `YJC`, `YOC`, `DC0`, `O02`, `C02`, `DH0`, `H02`, `DD0`, `DX0`, `DYC`, `DBM`, `DBT` (코드별 이름은 기록하지 않았습니다)
 
-## 선물/옵션 현재가(시세)조회 `t2111` — 구현됨 (요청만), 실서버 미검증
+## 선물/옵션 현재가(시세)조회 `t2111` — 구현·모의투자 실서버 확인
 
-근거: 사용자가 제공한 `t2111` 호출 샘플입니다. 공식 TR 명세 원문이 아니라 **샘플**이라서 아래 "샘플 기준"으로 표시한 항목은 명세 원문과 대조하지 못했습니다.
+근거: 공식 포털 API 서비스 목록에서 TR 코드와 API명을 확인하고, 엔드포인트·요청 형식은 제공받은 호출 샘플을 기준으로 구현했습니다. 샘플은 공식 TR 명세 원문이 아니므로 필드의 공식 정의와 호출 제한은 여전히 확인이 필요합니다.
 
 | 항목 | 내용 | 상태 |
 |---|---|---|
 | API명 | 선물/옵션현재가(시세)조회 | 확인 (공식 API 서비스 페이지) |
-| 엔드포인트 | `POST https://openapi.ls-sec.co.kr:8080/futureoption/market-data` | 샘플 기준 |
-| 요청 헤더 | `content-type`(`application/json; charset=utf-8`), `authorization`(`Bearer <토큰>`), `tr_cd`(`t2111`), `tr_cont`(`N`), `tr_cont_key`(빈 문자열), `mac_address`(샘플은 빈 값, 법인만 필수) | 샘플 기준 |
-| 요청 본문 | `{"t2111InBlock": {"focode": "<종목코드>"}}` | 샘플 기준 |
-| `focode` | 선물/옵션 종목코드. 샘플 값은 8자리 `A0166000`이지만 **현재 거래 중인 코드인지 알 수 없어** 코드에 넣지 않았습니다. 코스피200선물을 `A016C`처럼 5자리로 부르는 경우가 있어, 요청에 5자리와 8자리 중 무엇을 넣어야 하는지 | 형식·유효 범위 **미확인** (실서버 테스트로 확인 예정) |
-| 응답 OutBlock 구조 | 샘플에 없음 | **미확인** |
-| 초당 호출 제한 | 샘플에 없음 | **미확인** |
-| 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)을 쓸 것으로 **추정**, 명세 미확인 | 미확인 |
-| `Bearer` 접두사 동작 | 토큰 발급 응답의 `token_type`은 `Bearer`로 확인. 실제 TR 호출로는 아직 확인하지 않음 | **미검증** |
+| 엔드포인트 | `POST https://openapi.ls-sec.co.kr:8080/futureoption/market-data` | 샘플 기반 구현, 모의투자 실서버 호출 성공 (2026-10-14) |
+| 요청 헤더 | `content-type`(`application/json; charset=utf-8`), `authorization`(`Bearer <토큰>`), `tr_cd`(`t2111`), `tr_cont`(`N`), `tr_cont_key`(빈 문자열) | 샘플 기반, 실서버 호출 성공 |
+| 요청 본문 | `{"t2111InBlock": {"focode": "<종목코드>"}}` | 샘플 기반, 실서버 호출 성공 |
+| `focode` | 8자리 종목코드가 맞습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 현재 상장 네 월물 | `A016C000` (코스피200 F 202612), `A0173000` (202703), `A0176000` (202706), `A0179000` (202709) — 네 코드 모두 반환 `focode`가 요청과 일치하고 시세 응답 성공 | **실서버 확인** (Actions 재실행, 2026-10-14) |
+| 5자리 코드 | `A016C`는 HTTP/TR 오류 없이 응답했지만 `t2111OutBlock.focode`가 비어 있고 시세 필드가 0이었습니다. 유효한 종목 조회로 보지 않습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 응답 구조 | 최상위 `rsp_cd`, `rsp_msg`, `t2111OutBlock`. 성공 응답은 `rsp_cd=00000`, `rsp_msg=조회완료`; OutBlock에 요청 종목코드와 시세 필드가 포함됩니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 연속조회 응답 헤더 | `tr_cd=t2111`, `tr_cont=N`, `tr_cont_key=0` | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 필드 의미·자료형 | 응답 필드명과 샘플 값은 관측했지만 공식 필드 정의와 자료형은 대조하지 못했습니다. | 미확인 |
+| 초당 호출 제한 | 공식 명세나 실서버로 확인하지 않았습니다. | 미확인 |
+| 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)은 후보이며 실제 종목코드 조회는 확인하지 않았습니다. | 미확인 |
 
-- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다. 필드를 임의로 만들어 넣지 않기 위해서입니다.
-- 테스트: mock 단위 테스트(`tests/test_futureoption.py`). 응답 필드 이름은 가짜 값만 씁니다.
-- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기).
-- 실서버 검증: `tests/live/test_live_futures.py`가 응답 구조(블록 이름, 필드 이름, 값)를 출력합니다. 이 출력으로 OutBlock 구조를 확인해 이 표를 채웁니다. 사용법은 [live-testing.md](live-testing.md) 참고.
+- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
+- 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
+- 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. 재실행에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
+- 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
 
 ## 그 밖의 시세 후보 — 명세 미확인, 미구현
 
@@ -156,8 +159,22 @@
 | 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | **해결**: 실서버 응답은 `expires_in` (2026-10-12). 코드는 두 이름을 모두 허용하되 `expires_in`을 우선 사용 |
 | 시세 호출 예시 | "시작하기"의 주식 현재가 예시는 `GET`, 헤더 `tr_id` 사용. TR 명세 JSON은 `POST`, 헤더 `tr_cd` | TR 명세 JSON을 기준으로 삼음. 예시 코드는 따르지 않음 |
 
+## 선물/옵션 정상주문 `CFOAT00100` — 요청 구현, mock 확인만
+
+공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`(선물옵션 정상주문), 초당 전송 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 확인 시점에 포털에서 표시되지 않아, 필드 형식은 저장소 소유자가 제공한 호출 샘플을 따릅니다.
+
+| 항목 | 내용 | 상태 |
+|---|---|---|
+| TR / 경로 | `CFOAT00100`, `POST /futureoption/order` | 공식 포털에서 확인 |
+| 요청 블록 | `CFOAT00100InBlock1` | 사용자 제공 샘플 기준 |
+| 입력 필드 | `FnoIsuNo`, `BnsTpCode`, `FnoOrdprcPtnCode`, `FnoOrdPrc`, `OrdQty` | 샘플 기준, 의미·코드표는 일부 미확인 |
+| 응답 | 서버 JSON 원본을 반환; 성공 여부·주문번호를 해석하지 않음 | 미확인 |
+| 검증 | 경로·헤더·본문·입력 검사 mock 테스트 | 완료; 실서버 주문 제출 안 함 |
+
+`submit_futures_option_order` 호출은 실제 주문 요청을 제출하므로 자동 재시도하지 않습니다. 자세한 사용법과 확인 제한은 [docs/orders.md](orders.md)에 있습니다.
+
 ## 범위 제외
 
-- 주문 API: MVP에서 구현하지 않습니다.
+- 정정·취소 주문 API 및 계좌 주문가능수량 조회.
 - 실시간(WebSocket) 시세: MVP 범위가 아닙니다.
 - 업종, ELW, 주식, 해외 등 국내선물 외 API

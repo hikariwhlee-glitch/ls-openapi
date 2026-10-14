@@ -10,6 +10,7 @@ from .exceptions import (
     LSOpenAPIError,
 )
 from .futureoption import fetch_current_price
+from .orders import submit_futures_option_order
 
 __version__ = "0.1.0"
 
@@ -28,4 +29,5 @@ __all__ = [
     "fetch_current_price",
     "issue_token",
     "revoke_token",
+    "submit_futures_option_order",
 ]
