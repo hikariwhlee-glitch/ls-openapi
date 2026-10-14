@@ -33,7 +33,7 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 ```bash
 git clone https://github.com/hikariwhlee-glitch/ls-openapi.git
 cd ls-openapi
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .
 
 cp .env.example .env        # 앱키/시크릿키 입력 (Windows: copy)
@@ -42,7 +42,17 @@ python examples/domestic_futureoption/01_issue_token.py
 
 자세한 설명은 [docs/getting-started.md](docs/getting-started.md), 문제 해결은 [docs/troubleshooting.md](docs/troubleshooting.md)를 보세요. 시작 단계에서는 모의투자 앱키 사용을 권장합니다.
 
-## WebSocket 실시간 시세\n\n[사용 가이드](docs/websocket.md)를 참고하세요. `websocket-client` 의존성을 사용하며, 모의투자 연결을 기본값으로 합니다.\n\n```bash\npython examples/domestic_futureoption/04_futures_realtime.py A016C000 A0173000 A0176000 A0179000\n```\n\n실전 서버는 `--live`를 명시해야 접속됩니다. 실시간 시세 수신은 구독이며 주문을 전송하지 않습니다.\n\n## 구조
+## WebSocket 실시간 시세
+
+[사용 가이드](docs/websocket.md)를 참고하세요. `websocket-client` 의존성을 사용하며, 모의투자 연결을 기본값으로 합니다.
+
+```bash
+python examples/domestic_futureoption/04_futures_realtime.py A016C000 A0173000 A0176000 A0179000
+```
+
+실전 서버는 `--live`를 명시해야 접속됩니다. 실시간 시세 수신은 구독이며 주문을 전송하지 않습니다.
+
+## 구조
 
 ```
 src/ls_openapi/
@@ -52,7 +62,8 @@ src/ls_openapi/
     market_data/
       t2111.py      # 현재가
       t2112.py      # 호가
-      t8467.py      # 지수선물 마스터\n  websocket.py      # 실시간 FC9/FH9 구독
+      t8467.py      # 지수선물 마스터
+  websocket.py      # 실시간 FC9/FH9 구독
     orders/
       CFOAT00100.py # 신규 주문
       CFOAT00200.py # 정정
