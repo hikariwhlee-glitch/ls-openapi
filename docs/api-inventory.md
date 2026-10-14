@@ -134,7 +134,8 @@
 | 엔드포인트 | `POST https://openapi.ls-sec.co.kr:8080/futureoption/market-data` | 샘플 기반 구현, 모의투자 실서버 호출 성공 (2026-10-14) |
 | 요청 헤더 | `content-type`(`application/json; charset=utf-8`), `authorization`(`Bearer <토큰>`), `tr_cd`(`t2111`), `tr_cont`(`N`), `tr_cont_key`(빈 문자열) | 샘플 기반, 실서버 호출 성공 |
 | 요청 본문 | `{"t2111InBlock": {"focode": "<종목코드>"}}` | 샘플 기반, 실서버 호출 성공 |
-| `focode` | 8자리 종목코드가 맞습니다. `A016C000`으로 현재가 조회 및 반환 종목 확인에 성공했습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| `focode` | 8자리 종목코드가 맞습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
+| 현재 상장 네 월물 | `A016C000` (코스피200 F 202612), `A0173000` (202703), `A0176000` (202706), `A0179000` (202709) — 네 코드 모두 반환 `focode`가 요청과 일치하고 시세 응답 성공 | **실서버 확인** (Actions 재실행, 2026-10-14) |
 | 5자리 코드 | `A016C`는 HTTP/TR 오류 없이 응답했지만 `t2111OutBlock.focode`가 비어 있고 시세 필드가 0이었습니다. 유효한 종목 조회로 보지 않습니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
 | 응답 구조 | 최상위 `rsp_cd`, `rsp_msg`, `t2111OutBlock`. 성공 응답은 `rsp_cd=00000`, `rsp_msg=조회완료`; OutBlock에 요청 종목코드와 시세 필드가 포함됩니다. | **실서버 확인** (모의투자 키, 2026-10-14) |
 | 연속조회 응답 헤더 | `tr_cd=t2111`, `tr_cont=N`, `tr_cont_key=0` | **실서버 확인** (모의투자 키, 2026-10-14) |
@@ -144,7 +145,7 @@
 
 - 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
 - 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
-- 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. `A016C000`은 조회 성공, 5자리 `A016C`는 데이터 없는 응답으로 구분했습니다.
+- 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. 재실행에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
 - 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
 
 ## 그 밖의 시세 후보 — 명세 미확인, 미구현
