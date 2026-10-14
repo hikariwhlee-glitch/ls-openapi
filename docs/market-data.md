@@ -55,6 +55,8 @@
 | `time` | 수신시간 | String | 6 |
 | `shcode` | 단축코드 | String | 8 |
 
+`sign` 값은 `1` 상한, `2` 상승, `3` 보합, `4` 하한, `5` 하락입니다. 호가 레벨 1~5는 `offerho`/`bidho` 가격, `offerrem`/`bidrem` 잔량, `dcnt`/`scnt` 건수로 제공됩니다.
+
 ## `t8467` — 지수선물 마스터 조회
 
 호출 제한은 초당 2회입니다. 일반 코스피200 지수선물은 `gubun`을 빈 값 또는 `V`, `S`, `Q` 이외 값으로 요청합니다. 공식 설명은 `V`=변동성지수선물, `S`=섹터지수선물, `Q`=코스닥150지수선물, 그 외=코스피200지수선물입니다. 응답은 `t8467OutBlock` 배열이며 종목명·단축코드·확장코드·가격제한 및 기준 가격을 포함합니다.
@@ -70,6 +72,18 @@
 | `jnilhigh` | 전일고가 | Number | 9.2 |
 | `jnillow` | 전일저가 | Number | 9.2 |
 | `recprice` | 기준가 | Number | 9.2 |
+
+### 사용 예
+
+```python
+quote = fetch_orderbook(client, "A016C000")
+print(quote.body)
+
+contracts = fetch_index_futures_master(client)
+print(contracts.body)
+```
+
+이 예시는 이미 인증된 `LSClient`를 사용합니다. 함수들은 서버의 원본 응답을 반환하며 아직 실서버 호출 검증 전입니다.
 
 ## 종목코드 선택 참고
 
