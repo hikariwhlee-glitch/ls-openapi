@@ -12,11 +12,18 @@
 
 ## 주의
 
-정정 함수는 기존 주문의 가격/수량을 변경하고, 취소 함수는 기존 주문을 취소합니다. 호출 전에 계좌 환경, 종목코드, 원주문번호와 수량을 반드시 확인하세요. 두 기능은 사용자가 제공한 샘플 필드를 기준으로 구현했으며, 아직 모의투자 실서버 검증은 하지 않았습니다. 자동 재시도도 하지 않습니다.
+정정 함수는 기존 주문의 가격/수량을 변경하고, 취소 함수는 기존 주문을 취소합니다. 호출 전에 계좌 환경, 종목코드, 원주문번호와 수량을 반드시 확인하세요. 두 기능의 경로·요청 필드명·자료형·길이는 공식 가이드 JSON 및 사용자가 제공한 호출 샘플을 대조해 구현했습니다. 아직 모의투자 실서버 검증은 하지 않았습니다. 자동 재시도도 하지 않습니다.
 
 ## 정정주문 CFOAT00200
 
-사용자가 제공한 요청 필드를 그대로 사용합니다: `FnoIsuNo`, `OrgOrdNo`, `FnoOrdprcPtnCode`, `FnoOrdPrc`, `MdfyQty`.
+공식 가이드 JSON 기준 요청 블록은 `CFOAT00200InBlock1`이며 초당 제한은 10회입니다. 필드는 다음과 같습니다. | 필드 | 자료형/길이 | 설명 |
+|---|---|---|
+| `FnoIsuNo` | String / 12 | 선물옵션 종목번호 |
+| `OrgOrdNo` | Number / 10 | 원주문번호 |
+| `FnoOrdprcPtnCode` | String / 2 | 선물옵션 호가유형코드 (샘플은 지정가 `00`) |
+| `FnoOrdPrc` | Number / 27.8 | 정정 주문가격 |
+| `MdfyQty` | Number / 16 | 정정 수량 |
+
 
 ~~~python
 from ls_openapi import LSClient, Settings, TokenManager, modify_futures_option_order
@@ -41,7 +48,12 @@ finally:
 
 ## 취소주문 CFOAT00300
 
-사용자가 제공한 요청 필드를 그대로 사용합니다: `FnoIsuNo`, `OrgOrdNo`, `CancQty`.
+공식 가이드 JSON 기준 요청 블록은 `CFOAT00300InBlock1`이며 초당 제한은 10회입니다. 필드는 다음과 같습니다. | 필드 | 자료형/길이 | 설명 |
+|---|---|---|
+| `FnoIsuNo` | String / 12 | 선물옵션 종목번호 |
+| `OrgOrdNo` | Number / 10 | 원주문번호 |
+| `CancQty` | Number / 16 | 취소 수량 |
+
 
 ~~~python
 from ls_openapi import LSClient, Settings, TokenManager, cancel_futures_option_order
