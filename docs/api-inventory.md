@@ -175,8 +175,24 @@
 - 예제: `examples/domestic_futureoption/03_futures_option_order.py`. 명령행에서 종목·코드·가격·수량을 직접 지정합니다.
 - 테스트에서 현재가 + 1틱 가격을 만들던 로직은 `tests/live/test_live_order.py`에 한정합니다.
 - 주문 요청은 자동 재시도하지 않습니다. 함수 사용법과 제한은 [docs/orders.md](orders.md)를 참고하세요.
+## 선물옵션 계좌잔고 및 평가현황3 `CFOAQ50600` — 구현·mock 검증, 실서버 미확인
+
+공식 포털 목록(선물/옵션 계좌 14개)에서 TR 코드와 이름만 확인했습니다. 경로와 필드는 사용자가 제공한 호출 샘플을 기준으로 했습니다.
+
+| 항목 | 내용 | 상태 |
+|---|---|---|
+| TR / 경로 | `CFOAQ50600`, `POST /futureoption/accno` | TR은 공식 목록, 경로는 샘플 기준 |
+| 요청 블록 | `CFOAQ50600InBlock1` | 샘플 기준 |
+| 입력 필드 | `RecCnt`(1), `OrdDt`(YYYYMMDD), `BalEvalTp`, `FutsPrcEvalTp`, `LqtQtyQryTp`(샘플은 모두 `"1"`) | 샘플 기준, 구분 코드표 **미확인** |
+| 응답 필드 | | **미확인** (원본 JSON 그대로 반환) |
+| 초당 호출 제한 | | **미확인** |
+| 검증 | mock 단위 테스트 | 실서버 호출은 아직 안 함 |
+
+- 구현: `src/ls_openapi/tr/account/CFOAQ50600.py`의 `fetch_account_balance`. 예제: `examples/domestic_futureoption/04_account_balance.py`.
+- 응답에는 계좌·잔고 값이 들어 있을 수 있어 예제와 라이브 테스트(`tests/live/test_live_account.py`)는 값을 출력하지 않고 응답코드와 필드 이름만 출력합니다.
+
 ## 범위 제외
 
-- 정정·취소 주문 API 및 계좌 주문가능수량 조회.
+- 정정·취소 주문 API 및 계좌 주문가능수량 조회. (잔고 `CFOAQ50600` 외 계좌 TR은 미구현)
 - 실시간(WebSocket) 시세: MVP 범위가 아닙니다.
 - 업종, ELW, 주식, 해외 등 국내선물 외 API
