@@ -1,7 +1,8 @@
 """모의투자에서 네 KOSPI 200 선물 월물을 조회하고 각 1계약 매수 주문을 냅니다.
 
-이 테스트는 LS_LIVE_TEST=1 및 LS_LIVE_ORDER_TEST=1 일 때만 실행됩니다.
-종목마다 t2111의 price를 다시 조회하고, KRX 호가 단위 0.05포인트를 더해
+main의 live-test 워크플로를 codex/document-live-t2111-verified ref로 수동 실행한 경우에만
+주문을 전송합니다. LS_LIVE_TEST=1도 함께 필요하며, 일반 pytest나 다른 ref에서는 건너뜁니다.
+종목마다 t2111의 price를 다시 조회하고 KRX 호가 단위 0.05포인트를 더해
 지정가(BnsTpCode=2, FnoOrdprcPtnCode=00) 매수 1계약을 한 번 전송합니다.
 요청 재시도는 없으며, 주문이 체결되거나 미체결 상태로 남을 수 있습니다.
 """
@@ -22,8 +23,9 @@ from ls_openapi import (
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("LS_LIVE_TEST") != "1"
-    or os.environ.get("LS_LIVE_ORDER_TEST") != "1",
-    reason="모의투자 주문은 수동 Actions 실행에서 명시적으로 활성화해야 합니다",
+    or os.environ.get("GITHUB_REF")
+    != "refs/heads/codex/document-live-t2111-verified",
+    reason="이 실서버 주문은 Codex 브랜치의 수동 Actions 실행에서만 가능합니다",
 )
 
 _CONTRACTS = ("A016C000", "A0173000", "A0176000", "A0179000")
