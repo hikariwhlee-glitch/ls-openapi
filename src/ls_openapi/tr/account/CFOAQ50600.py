@@ -43,13 +43,20 @@ def fetch_futures_option_balance(
         if not isinstance(value, str) or not value.strip():
             raise ValueError("{}는 비어 있을 수 없는 문자열이어야 합니다.".format(label))
 
-    body = {
-        "CFOAQ50600InBlock1": {
-            "RecCnt": 1,
-            "OrdDt": order_date,
-            "BalEvalTp": balance_eval_type.strip(),
-            "FutsPrcEvalTp": futures_price_eval_type.strip(),
-            "LqtQtyQryTp": liquidation_quantity_query_type.strip(),
-        }
+    
+body = {
+    "CFOAQ50600InBlock1": {
+        "OrdDt": order_date,
+        "BalEvalTp": balance_eval_type.strip(),
+        "FutsPrcEvalTp": futures_price_eval_type.strip(),
+        "LqdtQtyQryTp": liquidation_quantity_query_type.strip(),
     }
-    return client.post_tr(PATH, TR_CD, body, mac_address=mac_address)
+}
+
+return client.post_tr(
+    PATH,
+    TR_CD,
+    body,
+    mac_address=mac_address,
+)
+
