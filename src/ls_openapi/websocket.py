@@ -48,13 +48,15 @@ class LSWebSocketClient:
         """모의투자(기본) 또는 실전 WebSocket 서버에 연결합니다."""
         if self._socket is not None:
             raise WebSocketError("WebSocket이 이미 연결되어 있습니다.")
+        socket = None
         try:
-            self._socket = websocket.create_connection(
-                self._url, timeout=self._timeout
-            )
+            socket = websocket.create_connection(self._url, timeout=self._timeout)
             # 연결 수립에는 timeout을 적용하고, 이후 수신은 장중에 계속 대기합니다.
-            self._socket.settimeout(None)
+            socket.settimeout(None)
+            self._socket = socket
         except (websocket.WebSocketException, OSError) as exc:
+            if socket is not None:
+                socket.close()
             self._socket = None
             raise WebSocketError(
                 "LS증권 WebSocket 연결에 실패했습니다 ({}).".format(type(exc).__name__)
@@ -63,12 +65,17 @@ class LSWebSocketClient:
     def subscribe(self, tr_cd: str, tr_key: str) -> None:
         """FC9 체결 또는 FH9 호가를 구독합니다. 현재 지원 종목코드는 8자리입니다."""
         self._validate_subscription(tr_cd, tr_key)
+        tr_key = tr_key.strip()
+        subscription = (tr_cd, tr_key)
+        if subscription in self._subscriptions:
+            return
         self._send_subscription(tr_cd, tr_key, tr_type="3")
-        self._subscriptions.add((tr_cd, tr_key))
+        self._subscriptions.add(subscription)
 
     def unsubscribe(self, tr_cd: str, tr_key: str) -> None:
         """등록한 실시간 시세 구독을 해제합니다."""
         self._validate_subscription(tr_cd, tr_key)
+        tr_key = tr_key.strip()
         self._send_subscription(tr_cd, tr_key, tr_type="4")
         self._subscriptions.discard((tr_cd, tr_key))
 
@@ -100,7 +107,7 @@ class LSWebSocketClient:
             for tr_cd, tr_key in tuple(self._subscriptions):
                 try:
                     self._send_subscription(tr_cd, tr_key, tr_type="4")
-                except (websocket.WebSocketException, OSError):
+                except (WebSocketError, websocket.WebSocketException, OSError):
                     break
         finally:
             self._subscriptions.clear()
@@ -115,7 +122,7 @@ class LSWebSocketClient:
         self.close()
 
     def _validate_subscription(self, tr_cd: str, tr_key: str) -> None:
-        if tr_cd not in SUPPORTED_TRS:
+        if not isinstance(tr_cd, str) or tr_cd not in SUPPORTED_TRS:
             raise ValueError(
                 "현재 지원하는 실시간 시세 TR은 FC9(체결), FH9(호가)입니다."
             )
