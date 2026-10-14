@@ -162,6 +162,14 @@
 | 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | **해결**: 실서버 응답은 `expires_in` (2026-10-12). 코드는 두 이름을 모두 허용하되 `expires_in`을 우선 사용 |
 | 시세 호출 예시 | "시작하기"의 주식 현재가 예시는 `GET`, 헤더 `tr_id` 사용. TR 명세 JSON은 `POST`, 헤더 `tr_cd` | TR 명세 JSON을 기준으로 삼음. 예시 코드는 따르지 않음 |
 
+## 실시간 선물 시세 WebSocket — 구현, 실서버 검증 대기
+
+- 공식 도메인: 모의투자 `wss://openapi.ls-sec.co.kr:29443/websocket`, 실전 `wss://openapi.ls-sec.co.kr:9443/websocket`.
+- `header.token`에 Access Token, `header.tr_type=3`으로 시세 구독을 등록하고 `tr_type=4`로 해제합니다.
+- `FC9` KOSPI200 선물 체결, `FH9` KOSPI200 선물 호가를 구현했습니다. 각각 사용자가 검증한 8자리 월물 코드를 받습니다.
+- 구현: `src/ls_openapi/websocket.py`, 예제: `examples/domestic_futureoption/04_futures_realtime.py`. 모의투자 서버가 기본값이며 `--live`를 지정해야 실전 서버를 선택합니다.
+- 장중 모의투자 연결, 구독 승인 응답, 데이터 수신은 아직 확인하지 않았습니다. 프레임 및 공식 필드 목록은 [WebSocket 문서](websocket.md)를 참고하세요.
+
 ## 선물/옵션 정상주문 `CFOAT00100` — 구현·모의투자 주문 접수 확인
 
 공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`(선물옵션 정상주문), 초당 전송 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 포털에서 확인 시 표시되지 않아, 필드 형식은 사용자가 제공한 호출 샘플을 기준으로 했습니다.
@@ -186,5 +194,4 @@
 ## 범위 제외
 
 - 계좌 잔고·주문가능수량 조회 등 계좌 TR.
-- 실시간 WebSocket: `FC9` 선물 체결 및 `FH9` 호가 모듈 구현, 장중 모의투자 검증 대기. 자세한 내용은 [websocket.md](websocket.md).
 - 업종, ELW, 주식, 해외 등 국내선물 외 API
