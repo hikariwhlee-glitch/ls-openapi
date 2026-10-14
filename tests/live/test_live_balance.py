@@ -1,16 +1,10 @@
 """실서버 모의투자 계좌에서 CFOAQ50600 잔고 TR만 조회합니다.
 
-실행 가드:
-    LS_LIVE_TEST=1
-    LS_BALANCE_LIVE_TEST=1
-
-LS_BALANCE_ORD_DATE가 없으면 현재 한국 날짜(YYYYMMDD)를 사용합니다.
-응답 본문에는 계좌 및 잔고 정보가 포함될 수 있어 어떠한 응답 데이터 값도 출력하지 않습니다.
+요청 날짜와 코드값은 사용자가 제공한 샘플 그대로 사용합니다.
+응답 본문에는 계좌 및 잔고 정보가 포함될 수 있어 값을 출력하지 않습니다.
 """
 
 import os
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -24,36 +18,20 @@ pytestmark = pytest.mark.skipif(
 
 
 def test_cfoaq50600_balance_inquiry():
-    order_date = os.environ.get("LS_BALANCE_ORD_DATE") or datetime.now(
-        ZoneInfo("Asia/Seoul")
-    ).strftime("%Y%m%d")
     settings = Settings.from_env()
     manager = TokenManager(settings)
     client = LSClient(settings, token_manager=manager)
 
     try:
-        response = fetch_futures_option_balance(client, order_date=order_date)
+        # 제공된 샘플 요청의 입력값을 그대로 재현합니다.
+        response = fetch_futures_option_balance(client, order_date="20240626")
         body = response.body if isinstance(response.body, dict) else {}
         response_code = body.get("rsp_cd")
-        # 잔고 데이터와 서버의 원문 메시지는 출력하지 않고 오류 종류만 분류합니다.
         print("[잔고 조회] TR:", response.tr_cd)
-        print("[잔고 조회] 날짜:", order_date)
+        print("[잔고 조회] OrdDt: 20240626")
         print("[잔고 조회] 응답코드:", response_code)
         print("[잔고 조회] 최상위 필드명:", sorted(body))
         assert response.tr_cd == "CFOAQ50600", "응답 TR 코드가 요청과 다릅니다."
-        if response_code != "00000":
-            message = str(body.get("rsp_msg") or "")
-            if any(word in message for word in ("일자", "날짜", "기간")):
-                category = "조회일 조건 확인 필요"
-            elif any(word in message for word in ("입력", "코드", "구분")):
-                category = "입력값 또는 구분코드 확인 필요"
-            elif any(word in message for word in ("계좌", "권한", "신청", "등록")):
-                category = "계좌 권한 또는 서비스 신청 확인 필요"
-            elif any(word in message for word in ("자료", "내역", "없")):
-                category = "조회 대상 자료 유무 확인 필요"
-            else:
-                category = "미분류 서버 오류 (원문은 로그에 기록하지 않음)"
-            print("[잔고 조회] 오류 분류:", category)
         assert response_code == "00000", "잔고 조회 성공 응답 코드가 아닙니다."
     except APIError as exc:
         # 예외 메시지에는 서버 응답이 포함될 수 있어 출력하지 않습니다.
