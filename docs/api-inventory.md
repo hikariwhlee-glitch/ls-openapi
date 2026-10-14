@@ -159,8 +159,22 @@
 | 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | **해결**: 실서버 응답은 `expires_in` (2026-10-12). 코드는 두 이름을 모두 허용하되 `expires_in`을 우선 사용 |
 | 시세 호출 예시 | "시작하기"의 주식 현재가 예시는 `GET`, 헤더 `tr_id` 사용. TR 명세 JSON은 `POST`, 헤더 `tr_cd` | TR 명세 JSON을 기준으로 삼음. 예시 코드는 따르지 않음 |
 
+## 선물/옵션 정상주문 `CFOAT00100` — 요청 구현, mock 확인만
+
+공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`(선물옵션 정상주문), 초당 전송 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 확인 시점에 포털에서 표시되지 않아, 필드 형식은 저장소 소유자가 제공한 호출 샘플을 따릅니다.
+
+| 항목 | 내용 | 상태 |
+|---|---|---|
+| TR / 경로 | `CFOAT00100`, `POST /futureoption/order` | 공식 포털에서 확인 |
+| 요청 블록 | `CFOAT00100InBlock1` | 사용자 제공 샘플 기준 |
+| 입력 필드 | `FnoIsuNo`, `BnsTpCode`, `FnoOrdprcPtnCode`, `FnoOrdPrc`, `OrdQty` | 샘플 기준, 의미·코드표는 일부 미확인 |
+| 응답 | 서버 JSON 원본을 반환; 성공 여부·주문번호를 해석하지 않음 | 미확인 |
+| 검증 | 경로·헤더·본문·입력 검사 mock 테스트 | 완료; 실서버 주문 제출 안 함 |
+
+`submit_futures_option_order` 호출은 실제 주문 요청을 제출하므로 자동 재시도하지 않습니다. 자세한 사용법과 확인 제한은 [docs/orders.md](orders.md)에 있습니다.
+
 ## 범위 제외
 
-- 주문 API: MVP에서 구현하지 않습니다.
+- 정정·취소 주문 API 및 계좌 주문가능수량 조회.
 - 실시간(WebSocket) 시세: MVP 범위가 아닙니다.
 - 업종, ELW, 주식, 해외 등 국내선물 외 API
