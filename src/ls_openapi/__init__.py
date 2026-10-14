@@ -11,6 +11,8 @@ from .exceptions import (
 )
 from .tr.market_data.t2111 import fetch_current_price
 from .tr.orders.CFOAT00100 import submit_futures_option_order
+from .tr.orders.CFOAT00200 import modify_futures_option_order
+from .tr.orders.CFOAT00300 import cancel_futures_option_order
 
 __version__ = "0.1.0"
 
@@ -27,6 +29,8 @@ __all__ = [
     "TokenManager",
     "build_in_block",
     "fetch_current_price",
+    "cancel_futures_option_order",
+    "modify_futures_option_order",
     "issue_token",
     "revoke_token",
     "submit_futures_option_order",
