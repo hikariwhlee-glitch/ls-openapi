@@ -90,7 +90,7 @@ tokens.revoke()                 # 더 이상 쓰지 않을 때 폐기
 python examples/domestic_futureoption/02_futures_price.py <종목코드>
 ```
 
-- 서버가 돌려준 JSON을 그대로 출력합니다. 응답 필드의 의미는 아직 정리되지 않았습니다.
+- 서버가 돌려준 JSON을 그대로 출력합니다. 공식 응답 필드는 [t2111 필드 문서](t2111-fields.md)에 정리했습니다.
 - 종목코드는 8자리(예: `A016C000`)로 실서버 확인했습니다. 5자리는 오류 없이 값이 모두 0인 응답이 옵니다. 월물은 만기가 지나면 쓸 수 없으니 현재 거래 중인 코드인지 확인하세요 ([api-inventory.md](api-inventory.md) 참고).
 
 ## 8. 선물 KOSPI200 실시간 시세 (WebSocket)
