@@ -143,7 +143,7 @@
 | 초당 호출 제한 | 공식 명세나 실서버로 확인하지 않았습니다. | 미확인 |
 | 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)은 후보이며 실제 종목코드 조회는 확인하지 않았습니다. | 미확인 |
 
-- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
+- 구현: `src/ls_openapi/tr/market_data/t2111.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
 - 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
 - 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. 재실행에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
 - 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
@@ -159,20 +159,22 @@
 | 토큰 유효기간 필드명 | TR 명세 JSON은 `expire_in`, "시작하기" 예시 응답은 `expires_in` | **해결**: 실서버 응답은 `expires_in` (2026-10-12). 코드는 두 이름을 모두 허용하되 `expires_in`을 우선 사용 |
 | 시세 호출 예시 | "시작하기"의 주식 현재가 예시는 `GET`, 헤더 `tr_id` 사용. TR 명세 JSON은 `POST`, 헤더 `tr_cd` | TR 명세 JSON을 기준으로 삼음. 예시 코드는 따르지 않음 |
 
-## 선물/옵션 정상주문 `CFOAT00100` — 요청 구현, mock 확인만
+## 선물/옵션 정상주문 `CFOAT00100` — 구현·모의투자 주문 접수 확인
 
-공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`(선물옵션 정상주문), 초당 전송 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 확인 시점에 포털에서 표시되지 않아, 필드 형식은 저장소 소유자가 제공한 호출 샘플을 따릅니다.
+공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`(선물옵션 정상주문), 초당 전송 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 포털에서 확인 시 표시되지 않아, 필드 형식은 사용자가 제공한 호출 샘플을 기준으로 했습니다.
 
 | 항목 | 내용 | 상태 |
 |---|---|---|
 | TR / 경로 | `CFOAT00100`, `POST /futureoption/order` | 공식 포털에서 확인 |
 | 요청 블록 | `CFOAT00100InBlock1` | 사용자 제공 샘플 기준 |
-| 입력 필드 | `FnoIsuNo`, `BnsTpCode`, `FnoOrdprcPtnCode`, `FnoOrdPrc`, `OrdQty` | 샘플 기준, 의미·코드표는 일부 미확인 |
-| 응답 | 서버 JSON 원본을 반환; 성공 여부·주문번호를 해석하지 않음 | 미확인 |
-| 검증 | 경로·헤더·본문·입력 검사 mock 테스트 | 완료; 실서버 주문 제출 안 함 |
+| 입력 필드 | `FnoIsuNo`, `BnsTpCode`, `FnoOrdprcPtnCode`, `FnoOrdPrc`, `OrdQty` | 샘플 기준, 매매·호가 코드표는 미확인 |
+| 응답 | 모의투자에서 `rsp_cd=00040`, “모의투자 매수주문이 완료 되었습니다.” 관측 | 접수 성공으로 관측; 환경별 의미 일반화는 미확인 |
+| 검증 | 8자리 월물 네 종목에 각 1계약 매수 요청, 성공 접수 응답 확인 | 모의투자 실서버, 2026-10-14; 체결 여부는 별도 |
 
-`submit_futures_option_order` 호출은 실제 주문 요청을 제출하므로 자동 재시도하지 않습니다. 자세한 사용법과 확인 제한은 [docs/orders.md](orders.md)에 있습니다.
-
+- 구현: `src/ls_openapi/tr/orders/CFOAT00100.py`의 `submit_futures_option_order`. 사용자가 넘긴 가격·수량·코드로 주문 TR만 호출하며 현재가 조회, 틱 계산, 매매 결정 로직은 포함하지 않습니다.
+- 예제: `examples/domestic_futureoption/03_futures_option_order.py`. 명령행에서 종목·코드·가격·수량을 직접 지정합니다.
+- 테스트에서 현재가 + 1틱 가격을 만들던 로직은 `tests/live/test_live_order.py`에 한정합니다.
+- 주문 요청은 자동 재시도하지 않습니다. 함수 사용법과 제한은 [docs/orders.md](orders.md)를 참고하세요.
 ## 범위 제외
 
 - 정정·취소 주문 API 및 계좌 주문가능수량 조회.
