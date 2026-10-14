@@ -11,8 +11,8 @@
 | 구분 | 주소 | 상태 |
 |---|---|---|
 | REST | `https://openapi.ls-sec.co.kr:8080` | 확인 |
-| WebSocket(실전) | `wss://openapi.ls-sec.co.kr:9443` | 확인 (이 저장소에서는 미사용) |
-| WebSocket(모의) | `wss://openapi.ls-sec.co.kr:29443` | 확인 (이 저장소에서는 미사용) |
+| WebSocket(실전) | `wss://openapi.ls-sec.co.kr:9443` | 공식 확인, `LSWebSocketClient` 실전 미검증 |
+| WebSocket(모의) | `wss://openapi.ls-sec.co.kr:29443` | 공식 확인, 모의투자 실서버 검증 대기 |
 | REST(모의투자) | `https://openapi.ls-sec.co.kr:8080` (실전과 동일) | **실서버 확인** — 공식 자료에는 REST 모의 주소가 명시되어 있지 않았으나(모의투자는 앱키/시크릿키만 별도 발급), 모의투자 키로 위 주소에서 토큰 발급·폐기가 성공함 (2026-10-12, 1회 관측, 발급 요청만 확인) |
 
 ## 인증
@@ -186,5 +186,5 @@
 ## 범위 제외
 
 - 계좌 잔고·주문가능수량 조회 등 계좌 TR.
-- 실시간(WebSocket) 시세: 다음 MVP 범위입니다.
+- 실시간 WebSocket: `FC9` 선물 체결 및 `FH9` 호가 모듈 구현, 장중 모의투자 검증 대기. 자세한 내용은 [websocket.md](websocket.md).
 - 업종, ELW, 주식, 해외 등 국내선물 외 API
