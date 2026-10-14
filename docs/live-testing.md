@@ -32,20 +32,32 @@ $env:LS_LIVE_TEST="1"; pytest -s tests/live    # Windows PowerShell
    - `LS_APP_SECRET`: 모의투자 시크릿키
 2. (권장) **Settings → Environments → New environment**에서 `live-test` 환경을 만들고 **Required reviewers**에 본인을 지정합니다. 실행 전에 승인이 필요해집니다.
 3. (선택) 모의투자 REST 주소가 다르다고 확인된 경우에만 **Settings → Secrets and variables → Actions → Variables**에 `LS_BASE_URL`을 등록합니다.
-4. **Actions 탭 → live-auth-test (수동 실행) → Run workflow**
+4. (시세 조회 테스트용) 같은 Variables 화면에 `LS_FOCODE`를 등록합니다. 조회할 선물/옵션 종목코드이며 비밀값이 아니라서 시크릿이 아닌 변수로 둡니다. 등록하지 않으면 시세 조회 테스트만 건너뜁니다.
+5. **Actions 탭 → live-auth-test (수동 실행) → Run workflow**
 
 워크플로우는 `workflow_dispatch`(수동 실행)로만 동작하며, push나 pull request로는 실행되지 않습니다. 포크한 저장소의 PR에는 시크릿이 전달되지 않습니다.
 
 ## 무엇을 확인하나
 
-토큰을 발급받고 곧바로 폐기합니다. 화면에는 앱키, 시크릿키, 토큰 값이 출력되지 않고 아래만 출력됩니다.
+테스트는 두 개입니다. 화면에는 앱키, 시크릿키, 토큰 값이 출력되지 않습니다.
+
+**1. 발급 → 폐기** (`tests/live/test_live_auth.py`): 발급과 폐기가 각각 동작하는지 확인하려고 발급 직후 폐기합니다. 이 토큰은 다른 호출에 쓰지 않습니다.
 
 | 출력 | 확인하려는 것 |
 |---|---|
 | 응답 필드명 | 유효기간 필드가 `expire_in`인지 `expires_in`인지 |
 | `token_type`, `expires_in`, `scope` | 토큰 응답 형식 |
-| 폐기 응답 `code` / `message` | 폐기 성공을 나타내는 코드 값 (공식 명세에 없음) |
+| 폐기 응답 `code` / `message` | 폐기 성공을 나타내는 코드 값 |
 | `base_url` | 어떤 주소로 호출했는지 |
+
+**2. 발급 → 선물/옵션 현재가(t2111) 조회 → 폐기** (`tests/live/test_live_futures.py`): 토큰 하나로 시세를 조회한 뒤 마지막에 폐기합니다. `LS_FOCODE`가 필요합니다.
+
+| 출력 | 확인하려는 것 |
+|---|---|
+| `[조회] 응답 tr_cd`, `tr_cont`, `tr_cont_key` | 응답 헤더 형식 |
+| `[응답] 최상위 키`, 블록 이름과 필드 이름·값 | 공식 샘플에 없는 응답(OutBlock) 구조. 값은 공개 시세 데이터입니다 |
+| 조회 실패 시 오류 메시지 | `Bearer` 접두사, 종목코드 형식 등의 문제 (HTTP 상태와 서버 메시지) |
+| `[폐기] code/message` | 조회 후 폐기도 정상인지 |
 
 결과를 공유할 때는 위 출력만 붙여 넣으면 됩니다. 키 값은 절대 붙여 넣지 마세요.
 

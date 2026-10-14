@@ -9,6 +9,7 @@ from .exceptions import (
     ConfigError,
     LSOpenAPIError,
 )
+from .futureoption import fetch_current_price
 
 __version__ = "0.1.0"
 
@@ -24,6 +25,7 @@ __all__ = [
     "TRResponse",
     "TokenManager",
     "build_in_block",
+    "fetch_current_price",
     "issue_token",
     "revoke_token",
 ]

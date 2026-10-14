@@ -90,6 +90,18 @@ pytest
 
 모의투자 앱키로 토큰 발급·폐기를 실서버에서 확인하는 방법은 [live-testing.md](live-testing.md)를 보세요. 모의투자용 REST 주소는 공식 자료에 명시되어 있지 않아, 그 문서의 안내를 먼저 읽어 주세요.
 
+## 8. 선물/옵션 현재가 조회 (t2111)
+
+종목코드(`focode`)를 인자로 넘겨 실행합니다. 토큰을 발급받아 한 번 조회하고 마지막에 폐기합니다.
+
+```bash
+python examples/domestic_futureoption/02_futures_price.py <종목코드>
+```
+
+- 서버가 돌려준 JSON을 그대로 출력합니다. 응답 필드의 의미는 아직 정리되지 않았습니다.
+- 종목코드 형식과 현재 거래 중인 코드는 이 저장소에서 확인되지 않았습니다. 조회가 거절되면 종목코드부터 확인하세요.
+- 이 기능은 mock 테스트까지만 검증되었고 실서버 확인 전입니다 ([api-inventory.md](api-inventory.md) 참고).
+
 ## 다음 단계
 
-국내선물 시세 조회 예제는 공식 TR 명세(TR 코드, 경로, 요청·응답 필드)를 확인한 뒤 `examples/domestic_futureoption/`에 추가됩니다.
+종목코드를 조회하는 마스터 TR, 호가(`t2112`) 등은 공식 TR 명세를 확인한 뒤 `examples/domestic_futureoption/`에 추가됩니다.

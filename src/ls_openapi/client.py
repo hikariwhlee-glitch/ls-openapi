@@ -74,7 +74,7 @@ class LSClient:
         """
         token = self._tokens.get_token()
         headers = {
-            "content-type": "application/json; charset=UTF-8",
+            "content-type": "application/json; charset=utf-8",
             "authorization": token.authorization_header,
             "tr_cd": tr_cd,
             "tr_cont": tr_cont,

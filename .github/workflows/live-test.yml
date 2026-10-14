@@ -24,11 +24,14 @@ jobs:
       - name: 설치
         run: pip install -e ".[dev]"
 
-      - name: 실서버 테스트 (토큰 발급 후 폐기)
+      - name: 실서버 테스트 (토큰 발급·폐기, 선물/옵션 현재가 t2111 조회)
         env:
           LS_LIVE_TEST: "1"
           LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
           LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
           # 선택: Settings > Variables 에 LS_BASE_URL 을 등록하면 REST 주소를 바꿀 수 있습니다.
           LS_BASE_URL: ${{ vars.LS_BASE_URL }}
+          # t2111 시세 조회 테스트용 종목코드. Settings > Variables 에 LS_FOCODE 를 등록하세요.
+          # 비어 있으면 시세 조회 테스트만 건너뜁니다.
+          LS_FOCODE: ${{ vars.LS_FOCODE }}
         run: pytest -s -v tests/live

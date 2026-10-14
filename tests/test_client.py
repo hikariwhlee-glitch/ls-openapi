@@ -32,7 +32,7 @@ def test_post_tr_sends_common_headers_and_body(settings):
     assert call["url"] == "https://example.invalid:8080/dummy/path"
     assert call["json"] == body
     assert call["headers"] == {
-        "content-type": "application/json; charset=UTF-8",
+        "content-type": "application/json; charset=utf-8",
         "authorization": "Bearer " + FAKE_TOKEN,
         "tr_cd": "t0000",
         "tr_cont": "N",
