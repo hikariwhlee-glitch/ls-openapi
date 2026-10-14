@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ls-openapi"
 version = "0.1.0"
-description = "LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 (인증, 국내선물 시세 조회)"
+description = "LS증권 OPEN API 비공식 Python 샘플 (인증, 국내선물 시세와 명시적 주문 요청)"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
