@@ -14,17 +14,15 @@ TR 기준으로 직접 가져오려면 다음 경로를 사용합니다. 편의�
 from ls_openapi.tr.market_data.t2111 import fetch_current_price
 from ls_openapi.tr.orders.CFOAT00100 import submit_futures_option_order
 ~~~
-- 모의투자 시세+주문 통합 시나리오와 현재가 + 1틱 가격 선택은 라이브 테스트(`tests/live/test_live_order.py`)에만 둡니다. 주문 API 함수는 이 테스트 가격 규칙을 적용하지 않습니다.
 
 ## 확인 상태
 
 공식 포털은 `POST /futureoption/order`, TR `CFOAT00100`, 초당 전송 건수 10회를 안내합니다. [공식 주문 API 가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90). 요청 필드 상세는 포털에서 확인 시 표시되지 않아 제공된 호출 샘플을 기준으로 했습니다.
 
-- Mock HTTP 테스트로 요청 경로, 헤더, 본문과 입력 검사를 확인합니다.
 - 모의투자 실서버에서 8자리 월물 코드 4개 각각에 1계약 주문 요청을 제출했고, 성공 응답을 확인했습니다. 모의투자 응답 `rsp_cd=00040`과 “모의투자 매수주문이 완료 되었습니다.”를 접수 성공으로 확인했습니다.
 - 이 결과는 주문 요청 접수를 확인한 것이며 실제 체결 여부를 뜻하지 않습니다. `rsp_cd=00040`의 의미가 모든 환경/주문 유형에서 같다고 일반화하지 않습니다.
 - 매매코드·호가유형코드의 공식 코드표, 응답 필드 의미, 주문번호 필드는 별도 확인이 필요합니다.
-- 정정·취소 주문과 주문 내역 조회는 아직 지원하지 않습니다. 잔고 조회는 `CFOAQ50600`으로 별도 제공합니다 ([docs/balance.md](balance.md)).
+- 정정·취소 주문과 주문/잔고 조회는 아직 지원하지 않습니다.
 
 ## Python API
 
