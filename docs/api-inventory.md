@@ -143,7 +143,7 @@
 | 초당 호출 제한 | 공식 명세나 실서버로 확인하지 않았습니다. | 미확인 |
 | 종목코드를 얻는 방법 | 마스터 조회 TR(`t8467`, `t9943`, `t8435`)은 후보이며 실제 종목코드 조회는 확인하지 않았습니다. | 미확인 |
 
-- 구현: `src/ls_openapi/futureoption.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
+- 구현: `src/ls_openapi/tr/market_data/t2111.py`의 `fetch_current_price(client, focode)`. 응답은 해석하지 않고 서버가 준 JSON을 `TRResponse.body`에 그대로 담습니다.
 - 테스트: mock 단위 테스트는 `tests/test_futureoption.py`, 실서버 테스트는 `tests/live/test_live_futures.py`입니다. 실서버 테스트는 요청한 `focode`가 OutBlock에 동일하게 반환되고 `rsp_cd=00000`인 경우에만 해당 종목 조회를 성공으로 셉니다.
 - 최신 검증: [GitHub Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211), 2026-10-14. 재실행에서 현재 상장 네 코드(`A016C000`, `A0173000`, `A0176000`, `A0179000`) 모두 `rsp_cd=00000` 및 요청과 일치하는 `t2111OutBlock.focode`를 반환했습니다. 5자리 `A016C`는 데이터 없는 응답이었습니다.
 - 예제: `examples/domestic_futureoption/02_futures_price.py <종목코드>` (발급 → 조회 → 폐기). 사용법은 [live-testing.md](live-testing.md)를 참고하세요.
@@ -171,7 +171,7 @@
 | 응답 | 모의투자에서 `rsp_cd=00040`, “모의투자 매수주문이 완료 되었습니다.” 관측 | 접수 성공으로 관측; 환경별 의미 일반화는 미확인 |
 | 검증 | 8자리 월물 네 종목에 각 1계약 매수 요청, 성공 접수 응답 확인 | 모의투자 실서버, 2026-10-14; 체결 여부는 별도 |
 
-- 구현: `src/ls_openapi/orders.py`의 `submit_futures_option_order`. 사용자가 넘긴 가격·수량·코드로 주문 TR만 호출하며 현재가 조회, 틱 계산, 매매 결정 로직은 포함하지 않습니다.
+- 구현: `src/ls_openapi/tr/orders/CFOAT00100.py`의 `submit_futures_option_order`. 사용자가 넘긴 가격·수량·코드로 주문 TR만 호출하며 현재가 조회, 틱 계산, 매매 결정 로직은 포함하지 않습니다.
 - 예제: `examples/domestic_futureoption/03_futures_option_order.py`. 명령행에서 종목·코드·가격·수량을 직접 지정합니다.
 - 테스트에서 현재가 + 1틱 가격을 만들던 로직은 `tests/live/test_live_order.py`에 한정합니다.
 - 주문 요청은 자동 재시도하지 않습니다. 함수 사용법과 제한은 [docs/orders.md](orders.md)를 참고하세요.
