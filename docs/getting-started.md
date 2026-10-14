@@ -25,7 +25,7 @@ cd ls-openapi
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
-pip install -e ".[dev]"
+pip install -e .
 ```
 
 ## 3. 인증정보 설정
@@ -78,19 +78,11 @@ print(token.authorization_header[:6])  # 'Bearer' — 전체 토큰은 출력하
 tokens.revoke()                 # 더 이상 쓰지 않을 때 폐기
 ```
 
-## 6. 테스트 실행
+## 6. 실제 키로 확인해 보기 (모의투자 권장)
 
-```bash
-pytest
-```
+`.env`에 모의투자 앱키/시크릿키를 넣고 예제를 실행하세요. 모의투자도 REST 주소는 기본값(`https://openapi.ls-sec.co.kr:8080`)으로 동작하는 것을 실서버에서 확인했으므로 `LS_BASE_URL`은 보통 지정하지 않아도 됩니다. 실전 키와 모의 키를 섞지 마세요.
 
-단위 테스트는 가짜(mock) HTTP 응답만 사용합니다. 실제 서버 접속이나 계정이 필요 없고, 앱키/시크릿키도 필요하지 않습니다.
-
-## 7. 실제 키로 확인해 보기 (모의투자 권장)
-
-모의투자 앱키로 토큰 발급·폐기를 실서버에서 확인하는 방법은 [live-testing.md](live-testing.md)를 보세요. 모의투자용 REST 주소는 공식 자료에 명시되어 있지 않아, 그 문서의 안내를 먼저 읽어 주세요.
-
-## 8. 선물/옵션 현재가 조회 (t2111)
+## 7. 선물/옵션 현재가 조회 (t2111)
 
 종목코드(`focode`)를 인자로 넘겨 실행합니다. 토큰을 발급받아 한 번 조회하고 마지막에 폐기합니다.
 
@@ -99,8 +91,7 @@ python examples/domestic_futureoption/02_futures_price.py <종목코드>
 ```
 
 - 서버가 돌려준 JSON을 그대로 출력합니다. 응답 필드의 의미는 아직 정리되지 않았습니다.
-- 종목코드 형식과 현재 거래 중인 코드는 이 저장소에서 확인되지 않았습니다. 조회가 거절되면 종목코드부터 확인하세요.
-- 이 기능은 mock 테스트까지만 검증되었고 실서버 확인 전입니다 ([api-inventory.md](api-inventory.md) 참고).
+- 종목코드는 8자리(예: `A016C000`)로 실서버 확인했습니다. 5자리는 오류 없이 값이 모두 0인 응답이 옵니다. 월물은 만기가 지나면 쓸 수 없으니 현재 거래 중인 코드인지 확인하세요 ([api-inventory.md](api-inventory.md) 참고).
 
 ## 다음 단계
 
