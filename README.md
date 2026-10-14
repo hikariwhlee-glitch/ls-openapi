@@ -24,9 +24,10 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 | 선물/옵션 현재가 조회 (`t2111`) | 구현·mock 테스트·모의투자 실서버 조회 확인 (현재 상장된 네 월물, 8자리 코드). 응답은 원본 JSON으로 반환 |
 | 그 밖의 시세 (호가, 멀티 현재가, 종목코드 마스터 등) | **보류** — TR은 공식 목록에서 확인, 경로와 요청·응답 필드 명세 확인 필요 |
 | 선물/옵션 정상주문 (`CFOAT00100`) | 기능 모듈 구현, mock 검증 및 모의투자에서 네 월물 주문 접수 응답 확인. 호출하면 주문 제출 |
+| 선물/옵션 잔고 조회 (`CFOAQ50600`) | 사용자 제공 샘플 기반 구현. 실서버 조회는 아직 미검증 |
 | 정정·취소 주문 | 범위 제외 |
 
-명세 확인 상태와 실서버 관측 결과는 [docs/api-inventory.md](docs/api-inventory.md)에 있습니다. 주문 요청은 [docs/orders.md](docs/orders.md)를 참고하세요. [2026-10-14 Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211)에서 토큰 발급·폐기와 현재 상장된 네 월물의 `t2111` 조회가 통과했습니다.
+명세 확인 상태와 실서버 관측 결과는 [docs/api-inventory.md](docs/api-inventory.md)에 있습니다. 주문 요청은 [docs/orders.md](docs/orders.md), 잔고 조회는 [docs/balance.md](docs/balance.md)를 참고하세요. [2026-10-14 Actions 실행 #3](https://github.com/hikariwhlee-glitch/ls-openapi/actions/runs/38497243211)에서 토큰 발급·폐기와 현재 상장된 네 월물의 `t2111` 조회가 통과했습니다.
 
 ## 시작하기
 
@@ -59,7 +60,7 @@ src/ls_openapi/
       CFOAT00100.py # 선물/옵션 정상주문, 가격 전략 없음
   exceptions.py    # 예외 클래스
 examples/domestic_futureoption/   # 인증·시세·주문 독립 실행 예제
-docs/                             # 시작하기, API 목록, 문제 해결, 주문
+docs/                             # 시작하기, API 목록, 문제 해결, 주문, 잔고 조회
 tests/                            # mock 응답 기반 단위 테스트
 ```
 
