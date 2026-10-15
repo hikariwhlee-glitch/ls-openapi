@@ -23,7 +23,7 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 | 선물/옵션 정상주문 (`CFOAT00100`) | 구현 및 모의투자 주문 접수 응답 확인 |
 | 선물/옵션 정정주문 (`CFOAT00200`) | 사용자 샘플·공식 가이드 기반 구현, 실서버 미검증 |
 | 선물/옵션 취소주문 (`CFOAT00300`) | 사용자 샘플·공식 가이드 기반 구현, 실서버 미검증 |
-| 잔고 조회 | 현재 브랜치 범위에서 제외 |
+| 잔고 조회 | 범위 제외 |
 | WebSocket 선물 체결·호가 (`FC9`, `FH9`) | 구현 및 모의투자 실서버 검증 대기 (실전은 `--live` 명시 필요) |
 
 `t2111`의 공식 필드 목록은 [응답 필드 문서](docs/t2111-fields.md), 추가 시세 TR은 [시세 문서](docs/market-data.md), 주문은 [주문 문서](docs/orders.md), 전체 명세 현황은 [API 목록](docs/api-inventory.md), WebSocket 구독은 [WebSocket 가이드](docs/websocket.md)를 참고하세요. 코딩 규약은 [docs/coding-conventions.md](docs/coding-conventions.md)입니다.

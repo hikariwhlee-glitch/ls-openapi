@@ -189,7 +189,7 @@
 
 - `CFOAT00200` 정정주문과 `CFOAT00300` 취소주문은 공식 가이드 JSON에서 `POST /futureoption/order`, 초당 10회, 입력 필드와 길이를 확인하고 기능 모듈을 구현했습니다.
 - 구현: `src/ls_openapi/tr/orders/CFOAT00200.py`, `CFOAT00300.py`. 샘플 기반 요청 호출이며 실서버 미검증입니다.
-- 요청 필드와 실행 예시는 [주문 문서](orders.md)를 참고하세요.
+- 요청 필드와 실행 예시는 [주문 문서](orders.md)를 참고하세요. 예제: `05_modify_order.py`, `06_cancel_order.py` (정상주문 `03` 예제의 `--show-response`로 원주문번호를 확인).
 
 ## 범위 제외
 
