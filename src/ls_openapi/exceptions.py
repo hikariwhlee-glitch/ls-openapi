@@ -23,3 +23,7 @@ class APIError(LSOpenAPIError):
     def __init__(self, message: str, status_code: Optional[int] = None) -> None:
         super().__init__(message)
         self.status_code = status_code
+
+
+class WebSocketError(LSOpenAPIError):
+    """WebSocket 연결 또는 메시지 처리에 실패했을 때."""

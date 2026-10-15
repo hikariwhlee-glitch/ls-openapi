@@ -16,8 +16,11 @@ def fetch_current_price(
     *,
     mac_address: Optional[str] = None,
 ) -> TRResponse:
-    """선물/옵션 현재가(t2111)를 조회하고 원본 응답을 반환합니다."""
-    if not isinstance(focode, str) or not focode.strip():
-        raise ValueError("focode(선물/옵션 종목코드)는 비어 있을 수 없습니다.")
+    """선물/옵션 현재가(t2111)를 조회하고 원본 응답을 반환합니다.
+
+    공식 InBlock의 focode 길이는 8자입니다. 길이가 다른 값은 거부합니다.
+    """
+    if not isinstance(focode, str) or len(focode.strip()) != 8:
+        raise ValueError("focode(선물/옵션 종목코드)는 8자리여야 합니다.")
     body = build_in_block(TR_CD, {"focode": focode.strip()})
     return client.post_tr(PATH, TR_CD, body, mac_address=mac_address)

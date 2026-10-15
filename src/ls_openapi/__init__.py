@@ -8,10 +8,15 @@ from .exceptions import (
     AuthError,
     ConfigError,
     LSOpenAPIError,
+    WebSocketError,
 )
-from .tr.account.CFOAQ50600 import fetch_account_balance
 from .tr.market_data.t2111 import fetch_current_price
+from .tr.market_data.t2112 import fetch_orderbook
+from .tr.market_data.t8467 import fetch_index_futures_master
 from .tr.orders.CFOAT00100 import submit_futures_option_order
+from .tr.orders.CFOAT00200 import modify_futures_option_order
+from .tr.orders.CFOAT00300 import cancel_futures_option_order
+from .websocket import LSWebSocketClient
 
 __version__ = "0.1.0"
 
@@ -23,12 +28,17 @@ __all__ = [
     "DEFAULT_BASE_URL",
     "LSClient",
     "LSOpenAPIError",
+    "LSWebSocketClient",
     "Settings",
     "TRResponse",
     "TokenManager",
+    "WebSocketError",
     "build_in_block",
-    "fetch_account_balance",
     "fetch_current_price",
+    "fetch_index_futures_master",
+    "fetch_orderbook",
+    "cancel_futures_option_order",
+    "modify_futures_option_order",
     "issue_token",
     "revoke_token",
     "submit_futures_option_order",
