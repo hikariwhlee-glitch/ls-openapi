@@ -1,0 +1,54 @@
+name: live-check (모의투자 수동 점검)
+
+# 모의투자 앱키로 실서버를 점검합니다. 자동 실행(push, pull_request)에는 연결하지 않고
+# Actions 탭에서 직접 실행할 때만 동작합니다.
+# 저장소가 공개라 로그도 공개됩니다. 스크립트는 키·토큰·계좌 정보를 출력하지 않습니다.
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: "점검할 항목"
+        required: true
+        type: choice
+        options:
+          - auth
+          - quote
+          - orderbook
+          - master
+          - websocket
+          - order-cycle
+      focode:
+        description: "종목코드 (비우면 Variables 의 LS_FOCODE 사용, order-cycle 은 첫 코드만 사용)"
+        required: false
+      confirm:
+        description: "order-cycle 은 모의투자 주문을 실제로 제출·정정·취소합니다. 진행하려면 ORDER 를 입력"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    environment: live-test
+    # order-cycle 은 확인 문구가 있어야만 실행합니다.
+    if: ${{ inputs.scenario != 'order-cycle' || inputs.confirm == 'ORDER' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 설치
+        run: pip install -e .
+
+      - name: 점검 실행
+        env:
+          LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
+          LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
+          LS_BASE_URL: ${{ vars.LS_BASE_URL }}
+          LS_FOCODE: ${{ vars.LS_FOCODE }}
+          SCENARIO: ${{ inputs.scenario }}
+          FOCODE_INPUT: ${{ inputs.focode }}
+        run: python scripts/live_check.py "$SCENARIO" $FOCODE_INPUT
