@@ -1,6 +1,6 @@
 # 국내선물옵션 백테스트 (초기 버전)
 
-현재 초기 엔진은 로컬 OHLC CSV 한 종목을 읽어 목표 계약 수량 신호를 다음 바 시가에 체결하고 손익을 계산합니다. LS API 인증이나 네트워크 연결은 필요하지 않습니다.
+현재 엔진은 로컬 OHLC CSV 한 종목을 읽어 목표 계약 수량 신호를 다음 바 시가에 체결하고 손익을 계산합니다. LS API 인증 없이 실행할 수 있으며, LS API 차트 어댑터도 별도로 제공합니다.
 
 ## 빠른 실행
 
@@ -8,7 +8,7 @@ Python 3.9 이상과 프로젝트 루트에서 설치한 패키지가 필요합�
 
 ```bash
 pip install -e .
-python examples/domestic_futureoption/10_csv_backtest.py examples/domestic_futureoption/sample_futures_1m.csv \\
+python examples/domestic_futureoption/10_csv_backtest.py examples/domestic_futureoption/sample_futures_1m.csv \
   --symbol SAMPLE-FUT --multiplier 250000 --tick-size 0.01 --margin 1000000 --fee 500
 ```
 
@@ -17,6 +17,12 @@ python examples/domestic_futureoption/10_csv_backtest.py examples/domestic_futur
 ## 입력 형식
 
 UTF-8 CSV 열: `timestamp,open,high,low,close`, 선택 열 `volume`. 시간은 ISO 8601이고 행은 엄격한 시간 오름차순이어야 합니다. 파일마다 계약/옵션 종목 하나만 넣습니다. 옵션은 옵션 프리미엄 OHLC를 입력하고 해당 상품 승수를 지정하면 프리미엄 변화에 따른 손익을 표시합니다.
+
+## LS증권 일봉 데이터
+
+`ls_openapi.tr.market_data.fetch_daily_bars`는 공식 TR `t8466`(선물/옵션차트 일·주·월)에서 일봉(`gubun="2"`) 한 페이지를 조회해 엔진의 `Bar` 형식으로 변환합니다. 공식 요청 필드는 `shcode`, `gubun`, `qrycnt`, `sdate`, `edate`, `cts_date`, `comp_yn`이며 응답 배열은 `t8466OutBlock1`입니다. 압축 조회 최대 2,000건, 비압축 최대 500건, 호출 제한 초당 1회로 안내되어 있습니다.
+
+함수는 한 페이지만 요청하며 자동 연속조회나 대기를 하지 않습니다. 다음 페이지가 있으면 응답의 `tr_cont`, `tr_cont_key`와 `t8466OutBlock.cts_date`를 확인해 호출자가 간격을 지켜 이어 조회해야 합니다. 자세한 공식 명세는 [LS증권 API 가이드 JSON의 t8466 항목](https://openapi.ls-sec.co.kr/api/apis/public/tr-guides.json?download=true)을 참고하세요.
 
 ## 신호·체결 가정
 
@@ -28,7 +34,7 @@ UTF-8 CSV 열: `timestamp,open,high,low,close`, 선택 열 `volume`. 시간은 I
 
 - 옵션 만기 정산, 행사·배정, 현금/실물결제 처리는 구현하지 않았습니다. 만기 전 청산을 사용자가 신호로 관리해야 합니다.
 - 선물 연속물 생성 및 월물 롤오버 규칙은 포함하지 않습니다.
-- LS증권 과거 데이터 차트 TR의 필드 매핑/페이지 조회 어댑터는 아직 미구현입니다. 공식 포털에 등록된 TR 이름과 호출 명세를 확인한 뒤 추가합니다.
+- LS API 어댑터는 t8466 일·주·월 차트 중 일봉 한 페이지를 지원합니다. 분봉·틱·전체 연속조회 수집은 포함하지 않습니다.
 - 실제 계약 승수·틱·증거금·수수료·거래세와 세션 경계를 공식 상품 명세와 증권사 자료로 확인해야 합니다.
 
 이는 연구·교육용 시뮬레이션이며 투자 조언 또는 실거래 손익 예측이 아닙니다. API의 실거래 주문 기능과 백테스트 엔진은 서로 호출하지 않습니다.
