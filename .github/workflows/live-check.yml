@@ -51,4 +51,14 @@ jobs:
           LS_FOCODE: ${{ vars.LS_FOCODE }}
           SCENARIO: ${{ inputs.scenario }}
           FOCODE_INPUT: ${{ inputs.focode }}
-        run: python scripts/live_check.py "$SCENARIO" $FOCODE_INPUT
+        run: |
+          set -o pipefail
+          python scripts/live_check.py "$SCENARIO" $FOCODE_INPUT 2>&1 | tee live_check.log
+
+      # 실행 로그를 check-run 주석(annotation)으로도 남깁니다. 로그 파일 자체는 API로 받기
+      # 어려운 환경에서도 `gh api repos/<owner>/<repo>/check-runs/<job id>/annotations` 로
+      # 읽을 수 있게 하려는 것입니다. 로그와 같은 내용이며 스크립트가 출력하지 않는 값
+      # (키·토큰·계좌 정보)은 여기에도 없습니다. 실패해도 이 단계는 실행합니다.
+      - name: 결과를 주석으로 남기기
+        if: ${{ always() }}
+        run: python scripts/annotate_log.py live_check.log
