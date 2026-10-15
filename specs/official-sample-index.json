@@ -1,0 +1,924 @@
+{
+  "source": "https://openapi.ls-sec.co.kr/apiservice",
+  "guide_version": "20261012053652748",
+  "generated_at_utc": "2026-10-15T06:14:50+00:00",
+  "transaction_count": 91,
+  "languages_on_portal": [
+    "Python",
+    "Java",
+    "JavaScript"
+  ],
+  "transactions": [
+    {
+      "code": "CCENQ10100",
+      "name": "KRX야간파생 주문가능수량 조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENQ10100?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CCENQ30100",
+      "name": "KRX야간파생 주문/체결내역 조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/faa66357-b33b-46c7-91d8-aa4894b56f37?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CCENQ90200",
+      "name": "KRX야간파생 잔고조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENQ90200?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOAQ00600",
+      "name": "선물옵션 계좌 주문체결내역 조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/216z4ie2-4275-4887-3740-6i2dr3a16626?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOAQ10100",
+      "name": "선물옵션 주문가능수량조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/w7b088r0-15f2-23nd-f64u-bspnv83368cp?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOAQ50600",
+      "name": "선물옵션 계좌잔고 및 평가현황3",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/be5bee77-5430-4c19-9c98-511d7d6c97d9?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOBQ10500",
+      "name": "선물옵션 계좌예탁금증거금조회",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/45806j0b-vj8a-qjg3-a4ah-b16866vp37oi?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOBQ10800",
+      "name": "선물옵션 옵션매도시 주문증거금조회(옵션매도시 1계약당 주문증거금)",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/b0870f58-8a05-45fa-8330-3c78d11343c3?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOEQ11100",
+      "name": "선물옵션가정산예탁금상세",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/3vs666s1-0dx2-8nqw-5mh5-6s7kt2j6434f?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOEQ82600",
+      "name": "선물옵션 일별 계좌손익내역",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/n3os3024-dhxt-713c-6b08-zllxz1m110nh?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "CFOFQ02400",
+      "name": "계좌 미결제 약정현황(평균가)",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/860prhn1-ts7u-i8bh-4nh8-4sin64ycp6of?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "FOCCQ33700",
+      "name": "선물옵션 기간별 계좌 수익률 현황",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/2z3barom-1l84-37b4-2r5d-7b85q215652g?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "t0434",
+      "name": "선물/옵션체결/미체결",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/z6a4ku4z-zn3q-221o-7yfl-g2u214z6o6o5?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "t0441",
+      "name": "선물/옵션잔고평가(이동평균)",
+      "group": "[선물/옵션] 계좌",
+      "protocol": "REST",
+      "path": "/futureoption/accno",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/1o2u734w-63qm-f48n-6tw5-653q82mb77vq?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a"
+    },
+    {
+      "code": "MMDAQ91200",
+      "name": "파생상품증거금율조회",
+      "group": "[선물/옵션] 기타",
+      "protocol": "REST",
+      "path": "/futureoption/etc",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=98373ce4-042a-4fc8-85ef-b9b8f64101ce&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/p4n047y4-38z1-r18a-rchs-a380e285yuyz?type=rest&api=98373ce4-042a-4fc8-85ef-b9b8f64101ce"
+    },
+    {
+      "code": "t2106",
+      "name": "선물/옵션현재가시세메모",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/q87i3436-4x1f-88ye-2tmn-ofc4q8g05hyi?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2111",
+      "name": "선물/옵션현재가(시세)조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/60nl3560-26kl-g02t-64x7-o0oxo8n56qsa?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2112",
+      "name": "선물/옵션현재가호가조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/0uxzs86x-j211-5hxr-w6hh-7lm825q2yop2?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2210",
+      "name": "선물옵션시간대별체결조회(단일출력용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/p5t6y761-7k60-2048-b78v-2bn0yi77h1cc?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2212",
+      "name": "선물옵션시간대별체결조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/0h4bf78p-c12y-er70-7803-np7zv72g46y8?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2214",
+      "name": "기간별주가",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/dv155010-6ty1-e41a-kc44-3q1673mk6rio?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2301",
+      "name": "옵션전광판",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/3xmo08bs-sfdt-k352-0x43-b036340j4bsq?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2407",
+      "name": "선물옵션호가잔량비율챠트",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/pb3zs2x7-3fhp-l536-7s1j-45875040k3wl?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2424",
+      "name": "미결제약정추이",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/uf51675k-7y66-yx3d-46g5-435gpbu6v251?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t2522",
+      "name": "주식선물기초자산조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/23202b3b-5a52-4248-8b0e-e97f19f76b33?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8401",
+      "name": "주식선물마스터조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/5m2t006b-vf03-21pv-7uv7-ap62272s4j18?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8402",
+      "name": "주식선물현재가조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/0e0vx10t-n32x-pg0n-stc4-67ru3ub2t0ez?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8403",
+      "name": "주식선물호가조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/iw5h2a35-715o-xbas-fx5c-877c1pisy51f?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8404",
+      "name": "주식선물시간대별체결조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/81pv6001-4g80-4527-j1v7-ghdhc46dg26t?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8405",
+      "name": "주식선물기간별주가(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/312k6y3y-ctb7-55i6-kw20-u0uizx475k8e?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8406",
+      "name": "주식선물틱분별체결조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/c6cg4b1z-72t4-m41r-qjnx-6jvze4yg5t3j?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8426",
+      "name": "상품선물마스터조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/ge1gb75q-6551-8v58-yl2q-5e4252rl58m0?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8427",
+      "name": "과거데이터시간대별조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/7q05l438-4gr4-0yz0-3b4w-t875j5zq7sfh?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8433",
+      "name": "지수옵션마스터조회API용",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/26m28b8c-3126-b4w0-14c6-ly7phzi1m601?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8434",
+      "name": "선물/옵션멀티현재가조회",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "3",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/j4881tsx-00k1-81sz-4143-ocat1lu6iq65?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8435",
+      "name": "파생종목마스터조회API용",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/inrf05yt-g110-d15z-61e7-4560p1cc4853?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8455",
+      "name": "KRX야간파생 마스터조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8455?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8456",
+      "name": "KRX야간파생 시세조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8456?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8457",
+      "name": "KRX야간파생 호가조회(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8457?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8458",
+      "name": "KRX야간파생 시간대별체결(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8458?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8459",
+      "name": "KRX야간파생 기간별주가(API용)",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8459?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8460",
+      "name": "KRX야간파생 옵션 전광판",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8460?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t8467",
+      "name": "지수선물마스터조회API용",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/j2ji6uwp-lu1d-q124-e2f8-ji5720zm2i7d?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t9943",
+      "name": "지수선물마스터조회API용",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/t56815xu-yx0h-n5m2-e355-oy4wcm05q8b6?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "t9944",
+      "name": "지수옵션마스터조회API용",
+      "group": "[선물/옵션] 시세",
+      "protocol": "REST",
+      "path": "/futureoption/market-data",
+      "rate_limit_per_second": "2",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/283404p0-sddl-35yd-7g03-mj0q266c7bfc?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f"
+    },
+    {
+      "code": "C01",
+      "name": "선물주문체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/0irot5h7-6240-6s6d-0qk8-l8ui5vaai4v7?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "C02",
+      "name": "KRX야간파생 선물체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000C02?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "CD0",
+      "name": "상품선물실시간상하한가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/p672pms7-z16q-rn77-2n5l-7gl60fwnivu8?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DBM",
+      "name": "KRX야간파생 투자자매매현황",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DBM?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DBT",
+      "name": "KRX야간파생 투자자별현황",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DBT?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DC0",
+      "name": "KRX야간파생 체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DC0?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DD0",
+      "name": "KRX야간파생 실시간상하한가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DD0?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DH0",
+      "name": "KRX야간파생 호가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DH0?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DX0",
+      "name": "KRX야간파생 가격제한폭확대",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DX0?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "DYC",
+      "name": "KRX야간파생 예상체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000DYC?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "FC9",
+      "name": "KOSPI200선물체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/4ab0k2u7-kl78-y52c-e2m7-p13v5csnt014?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "FD0",
+      "name": "KOSPI200선물실시간상하한가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/abb3q1c7-45xx-61og-4oeg-e0nm84jf2v18?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "FH9",
+      "name": "KOSPI200선물호가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/2xv23r6o-4a8e-574s-rikj-x7iplgyoqclq?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "FX9",
+      "name": "KOSPI200선물가격제한폭확대",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/b7p5scxa-0c1s-7e6t-1f2u-1z7716r515kv?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "H01",
+      "name": "선물주문정정취소",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/5f525823-f2d9-4638-8eaa-307be1e1a535?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "H02",
+      "name": "KRX야간파생 선물정정취소",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000H02?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "JC0",
+      "name": "주식선물체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/8zcc1f1e-58k6-n20f-ypg1-h2rd6hd3v304?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "JD0",
+      "name": "주식선물실시간상하한가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/5b1l30l5-i71o-2s13-7s7d-tu4s72pa0nv8?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "JH0",
+      "name": "주식선물호가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/fwwkp60n-z431-7q2h-u847-lgx43tud56wo?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "JX0",
+      "name": "주식선물가격제한폭확대",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/lvlsq1pe-6g00-5sls-055a-wc8285u3pl2j?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "O01",
+      "name": "선물접수",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/4410h36r-th14-osbq-2rey-vbrn7g71k457?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "O02",
+      "name": "KRX야간파생 선물접수",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000O02?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "OC0",
+      "name": "KOSPI200옵션체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/76072h62-h48f-flf6-38w2-lrvs7s1qj1q6?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "OD0",
+      "name": "KOSPI200옵션실시간상하한가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/yw60867c-45fb-w47r-2db4-2861e0vb5evx?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "OH0",
+      "name": "KOSPI200옵션호가",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/8rj74yu0-gma6-l2b6-cuc3-5kvhhb0snm2c?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "OMG",
+      "name": "KOSPI200옵션민감도",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/30d5gryt-et0l-76a7-tq46-w2ui7ed3t4k7?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "OX0",
+      "name": "KOSPI200옵션가격제한폭확대",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/d267i487-yk5t-a84i-446t-538m5f65qtm5?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "YC3",
+      "name": "상품선물예상체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/e2v4f5qi-3038-420r-5pkt-pa84oh287xni?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "YF9",
+      "name": "지수선물예상체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/3adzj1y0-b1y6-57d5-x5m8-fuq1pb2340pc?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "YJC",
+      "name": "주식선물예상체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/2o40382l-81tg-36i4-33m0-4yiujqcjy64q?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "YOC",
+      "name": "지수옵션예상체결",
+      "group": "[선물/옵션] 실시간 시세",
+      "protocol": "WEBSOCKET",
+      "path": "/websocket",
+      "rate_limit_per_second": "-",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/8478652c-n55m-4n0r-54nx-005qzs00shaj?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462"
+    },
+    {
+      "code": "CCENT00100",
+      "name": "KRX야간파생 위탁 신규 주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "5",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENT00100?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "CCENT00200",
+      "name": "KRX야간파생 위탁 정정 주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "5",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENT00200?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "CCENT00300",
+      "name": "KRX야간파생 위탁 취소 주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "5",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENT00300?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "CFOAT00100",
+      "name": "선물옵션 정상주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/1g6i3v5a-4n3u-63d1-07br-ykv647gu38uf?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "CFOAT00200",
+      "name": "선물옵션 정정주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/1t1252mz-mcn1-ou7y-3ie2-t56d48t3471a?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "CFOAT00300",
+      "name": "선물옵션 취소주문",
+      "group": "[선물/옵션] 주문",
+      "protocol": "REST",
+      "path": "/futureoption/order",
+      "rate_limit_per_second": "10",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/7mqf3v58-aa34-23kx-r6ez-7z7rm2n5lt0s?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27"
+    },
+    {
+      "code": "t2216",
+      "name": "선물옵션틱분별체결조회차트",
+      "group": "[선물/옵션] 차트",
+      "protocol": "REST",
+      "path": "/futureoption/chart",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/v3tpt4yr-20bu-dnu2-1080-27u3gf713q1o?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b"
+    },
+    {
+      "code": "t8461",
+      "name": "KRX야간파생 틱분별조회(API용)",
+      "group": "[선물/옵션] 차트",
+      "protocol": "REST",
+      "path": "/futureoption/chart",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8461?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b"
+    },
+    {
+      "code": "t8464",
+      "name": "선물옵션차트(틱/n틱)",
+      "group": "[선물/옵션] 차트",
+      "protocol": "REST",
+      "path": "/futureoption/chart",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/78lgic88-s8zx-4y8b-05ib-y68rql0lxsbd?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b"
+    },
+    {
+      "code": "t8465",
+      "name": "선물/옵션차트(N분)",
+      "group": "[선물/옵션] 차트",
+      "protocol": "REST",
+      "path": "/futureoption/chart",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/6r6b18sc-cn36-y4vw-wil8-jra56onl6v4x?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b"
+    },
+    {
+      "code": "t8466",
+      "name": "선물/옵션차트(일주월)",
+      "group": "[선물/옵션] 차트",
+      "protocol": "REST",
+      "path": "/futureoption/chart",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/03577718-rp1f-nn3v-aomw-e78mu61q0u1k?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b"
+    },
+    {
+      "code": "t2541",
+      "name": "상품선물투자자매매동향(실시간)",
+      "group": "[선물/옵션] 투자자",
+      "protocol": "REST",
+      "path": "/futureoption/investor",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/8fa18e6a-d6vg-76f4-zu1g-bgizg8o00vfu?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669"
+    },
+    {
+      "code": "t2545",
+      "name": "상품선물투자자매매동향(챠트용)",
+      "group": "[선물/옵션] 투자자",
+      "protocol": "REST",
+      "path": "/futureoption/investor",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/ng2n026k-1521-364u-wfpv-3s61g3t232l7?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669"
+    },
+    {
+      "code": "t8462",
+      "name": "KRX야간파생 투자자기간별(API용)",
+      "group": "[선물/옵션] 투자자",
+      "protocol": "REST",
+      "path": "/futureoption/investor",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8462?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669"
+    },
+    {
+      "code": "t8463",
+      "name": "KRX야간파생 투자자시간대별(API용)",
+      "group": "[선물/옵션] 투자자",
+      "protocol": "REST",
+      "path": "/futureoption/investor",
+      "rate_limit_per_second": "1",
+      "official_page": "https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90",
+      "sample_data": "https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8463?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669"
+    }
+  ]
+}
+
