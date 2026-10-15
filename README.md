@@ -23,17 +23,18 @@ LS증권 OPEN API를 처음 쓰는 Python 개발자를 위한 비공식 샘플 �
 | 선물/옵션 정상주문 (`CFOAT00100`) | 구현 및 모의투자 주문 접수 응답 확인 |
 | 선물/옵션 정정주문 (`CFOAT00200`) | 사용자 샘플·공식 가이드 기반 구현, 실서버 미검증 |
 | 선물/옵션 취소주문 (`CFOAT00300`) | 사용자 샘플·공식 가이드 기반 구현, 실서버 미검증 |
+| CSV 기반 파생상품 OHLC 백테스트 | 초기 버전 구현; 옵션 정산·증거금·롤오버 모델은 미지원 |
 | 잔고 조회 | 현재 브랜치 범위에서 제외 |
 | WebSocket 선물 체결·호가 (`FC9`, `FH9`) | 구현 및 모의투자 실서버 검증 대기 (실전은 `--live` 명시 필요) |
 
-`t2111`의 공식 필드 목록은 [응답 필드 문서](docs/t2111-fields.md), 추가 시세 TR은 [시세 문서](docs/market-data.md), 주문은 [주문 문서](docs/orders.md), 전체 명세 현황은 [API 목록](docs/api-inventory.md), WebSocket 구독은 [WebSocket 가이드](docs/websocket.md)를 참고하세요. 코딩 규약은 [docs/coding-conventions.md](docs/coding-conventions.md)입니다.
+`t2111`의 공식 필드 목록은 [응답 필드 문서](docs/t2111-fields.md), 추가 시세 TR은 [시세 문서](docs/market-data.md), 주문은 [주문 문서](docs/orders.md), 전체 명세 현황은 [API 목록](docs/api-inventory.md), WebSocket 구독은 [WebSocket 가이드](docs/websocket.md), 백테스트는 [백테스트 가이드](docs/backtesting.md)를 참고하세요. 코딩 규약은 [docs/coding-conventions.md](docs/coding-conventions.md)입니다.
 
 ## 시작하기
 
 ```bash
 git clone https://github.com/hikariwhlee-glitch/ls-openapi.git
 cd ls-openapi
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
 pip install -e .
 
 cp .env.example .env        # 앱키/시크릿키 입력 (Windows: copy)
@@ -41,6 +42,17 @@ python examples/domestic_futureoption/01_issue_token.py
 ```
 
 자세한 설명은 [docs/getting-started.md](docs/getting-started.md), 문제 해결은 [docs/troubleshooting.md](docs/troubleshooting.md)를 보세요. 시작 단계에서는 모의투자 앱키 사용을 권장합니다.
+
+## CSV 백테스트 시작하기
+
+백테스트는 API 인증 없이 로컬 CSV로 실행합니다. 예제 시세와 계약 수치는 실행 방법을 위한 인공 값입니다.
+
+```bash
+python examples/domestic_futureoption/10_csv_backtest.py examples/domestic_futureoption/sample_futures_1m.csv \\
+  --symbol SAMPLE-FUT --multiplier 250000 --tick-size 0.01 --margin 1000000 --fee 500
+```
+
+지원 범위와 데이터·체결 가정은 [docs/backtesting.md](docs/backtesting.md)에 적혀 있습니다. 이 초기 엔진은 옵션 프리미엄 시계열을 평가할 수 있지만 만기 정산, 행사·배정, 거래소 증거금 및 롤오버를 모델링하지 않으므로 실거래 성과 예측에 사용하면 안 됩니다.
 
 ## WebSocket 실시간 시세
 
@@ -67,7 +79,8 @@ src/ls_openapi/
       CFOAT00100.py # 신규 주문
       CFOAT00200.py # 정정
       CFOAT00300.py # 취소
-  websocket.py      # 실시간 FC9/FH9 구독
+  backtest/          # 브로커 독립 CSV 기반 엔진
+  websocket.py       # 실시간 FC9/FH9 구독
 examples/domestic_futureoption/
 docs/
 ```
