@@ -3,7 +3,7 @@
 - 공식 API 서비스: [https://openapi.ls-sec.co.kr/apiservice](https://openapi.ls-sec.co.kr/apiservice)
 - 가이드 버전: `20261012053652748`
 - TR: 91개
-- 샘플 JSON 링크는 해당 TR의 Python·Java·JavaScript 코드 예제를 포함한 공식 상세 데이터를 엽니다.
+- 이 저장소에서 제공하는 실행 코드는 Python뿐입니다. 아래 샘플 JSON 링크는 LS증권 공식 상세 데이터를 열며, 공식 데이터에는 Python 외 언어의 샘플도 포함될 수 있습니다.
 - 이 저장소는 공식 샘플 코드를 복사해 재배포하지 않고, TR별 공식 페이지 링크와 검색용 메타데이터를 제공합니다.
 
 ## [선물/옵션] 계좌
@@ -134,7 +134,7 @@
 
 ## 이용 방법
 
-샘플 JSON 링크에서 해당 TR의 `codeSamples` 안에 있는 Python, Java, JavaScript 코드를 확인하세요. 공식 가이드 링크는 해당 TR이 속한 API 그룹 페이지를 엽니다. 예제의 인증 값과 요청값을 본인 환경에 맞게 설정한 뒤, 특히 주문 API는 실계좌 주문이 발생하지 않도록 토큰과 계좌 환경을 확인해야 합니다.
+이 저장소가 제공하는 실행 가능한 클라이언트와 예제는 Python입니다. 샘플 JSON 링크는 공식 사이트의 상세 데이터이며, 해당 페이지에 Python 외 언어 코드도 있을 수 있습니다. 공식 가이드 링크는 해당 TR이 속한 API 그룹 페이지를 엽니다.
 
 > 출처: [LS증권 API 서비스](https://openapi.ls-sec.co.kr/apiservice). 명세 필드 표는 [공식 명세 스냅샷](../specs/domestic-futures-options.json)을 참고하세요.
 

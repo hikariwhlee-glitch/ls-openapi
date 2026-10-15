@@ -1,17 +1,17 @@
 # ls-openapi
 
-LS증권 국내 선물·옵션 Open API를 활용하기 위한 비공식 개발 자료 모음입니다.
+LS증권 국내 선물·옵션 Open API를 활용하는 비공식 Python 프로젝트입니다. 이 저장소에서 제공하는 실행 코드와 패키지는 Python만 지원합니다.
 
 ## 1차 MVP — 공식 예제와 명세 바로가기
 
-LS증권 공식 API 서비스는 국내 선물·옵션의 TR 명세와 Python·Java·JavaScript 코드 샘플을 제공합니다. 이 저장소는 91개 TR을 카테고리별로 정리하고, 각 TR의 공식 가이드 그룹과 언어별 샘플이 담긴 상세 JSON을 바로 열 수 있게 인덱싱합니다. 요청·응답 필드 명세도 함께 보관합니다.
+LS증권 공식 API 서비스는 국내 선물·옵션의 TR 명세와 여러 언어의 공식 샘플을 제공합니다. 이 저장소는 공식 샘플 링크와 명세를 참고 자료로 연결하고, 직접 실행·재사용할 Python 클라이언트와 예제를 제공합니다. Java 및 JavaScript 구현은 제공하지 않습니다.
 
 - [국내 선물·옵션 TR별 공식 샘플 인덱스](docs/official-samples.md)
 - [공식 명세 JSON 스냅샷](specs/domestic-futures-options.json)
 - [사람이 읽는 전체 명세](docs/domestic-futures-options.md)
 - [LS증권 API 서비스](https://openapi.ls-sec.co.kr/apiservice)
 
-샘플 JSON 링크의 `codeSamples`에서 해당 TR의 언어별 예제를 확인할 수 있습니다. 이 저장소는 공식 코드 샘플 원문을 대량 복제하지 않고, 출처가 명확한 링크와 검색용 인덱스를 제공합니다.
+샘플 JSON 링크는 LS증권 공식 사이트의 샘플 데이터를 엽니다. 그 데이터에 Python 외 언어의 공식 예제가 포함될 수 있지만, 이 저장소가 제공하는 코드는 Python뿐입니다. 공식 코드 원문은 복제하지 않고 출처 링크와 검색용 인덱스를 제공합니다.
 
 ## Python에서 바로 사용
 
