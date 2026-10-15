@@ -8,7 +8,8 @@
   python scripts/live_check.py websocket [종목코드]
   python scripts/live_check.py order-cycle [종목코드]   # 주문 → 정정 → 취소 (모의투자 주문이 실제로 나갑니다)
 
-종목코드를 생략하면 환경변수 LS_FOCODE(쉼표 구분)를 씁니다.
+종목코드를 생략하면 t8467 지수선물 마스터에서 코스피200 선물 월물 코드를 조회해 씁니다.
+마스터 조회가 실패하면 환경변수 LS_FOCODE(쉼표 구분)로 대신합니다. 인자로 주면 그 값을 우선합니다.
 
 공개 저장소의 Actions 로그는 누구나 볼 수 있으므로 앱키·토큰·계좌 정보는 출력하지 않습니다.
 시세는 공개 데이터라 값을 출력하고, 주문 응답은 응답코드·메시지·필드 이름만 출력합니다.
@@ -80,11 +81,49 @@ def _is_ok(body):
     return str(body.get("rsp_cd", "")).startswith("00")
 
 
-def _focodes(args):
-    raw = args[0] if args else os.environ.get("LS_FOCODE", "")
+def _master_codes(client):
+    """t8467 마스터에서 코스피200 선물 월물 후보 코드를 고릅니다.
+
+    응답 구조는 공식 명세(t8467OutBlock 배열, shcode/hname)를 따릅니다. 월물만 고르는 기준
+    ("hname 이 '코스피200 F' 로 시작")은 t2111 응답에서 관측한 종목명(예: '코스피200 F 202612')에
+    기대는 임시 기준이며, 스프레드 등 다른 종목의 이름 규칙은 확인되지 않았습니다.
+    """
+    response = fetch_index_futures_master(client, "")
+    body = _body(response)
+    rows = body.get("t8467OutBlock")
+    if not _is_ok(body) or not isinstance(rows, list):
+        raise CheckFailed("t8467 응답에서 종목 목록을 읽지 못했습니다 (rsp_cd={!r}).".format(body.get("rsp_cd")))
+    codes = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        code = str(row.get("shcode", "")).strip()
+        if len(code) == 8 and str(row.get("hname", "")).strip().startswith("코스피200 F"):
+            codes.append(code)
+    print("[마스터] t8467 {}건 중 월물 후보 {}건: {}".format(len(rows), len(codes), codes))
+    if not codes:
+        raise CheckFailed("t8467 목록에서 월물 후보를 찾지 못했습니다.")
+    return codes
+
+
+def _focodes(args, client=None):
+    """종목코드 결정: 인자 > t8467 마스터 > LS_FOCODE 환경변수 순서입니다."""
+    if args:
+        raw = args[0]
+    else:
+        raw = ""
+        if client is not None:
+            try:
+                time.sleep(PAUSE)
+                return _master_codes(client)
+            except (APIError, CheckFailed) as exc:
+                print("[마스터] 사용 못 함: {}".format(exc))
+        raw = os.environ.get("LS_FOCODE", "")
+        if raw:
+            print("[종목코드] LS_FOCODE 환경변수를 대신 사용합니다.")
     codes = [c.strip() for c in raw.split(",") if c.strip()]
     if not codes:
-        raise CheckFailed("종목코드가 없습니다. 인자 또는 LS_FOCODE(쉼표 구분)를 지정하세요.")
+        raise CheckFailed("종목코드를 정하지 못했습니다. 인자로 주거나 LS_FOCODE를 설정하세요.")
     return codes
 
 
@@ -106,10 +145,10 @@ def check_auth(args):
 
 
 def check_quote(args):
-    codes = _focodes(args)
     settings, manager, client = _client()
     failed = []
     try:
+        codes = _focodes(args, client)
         for index, code in enumerate(codes):
             if index:
                 time.sleep(PAUSE)
@@ -129,9 +168,10 @@ def check_quote(args):
 
 
 def check_orderbook(args):
-    code = _focodes(args)[0]
     settings, manager, client = _client()
     try:
+        code = _focodes(args, client)[0]
+        time.sleep(PAUSE)
         print("[t2112] shcode={}".format(code))
         response = fetch_orderbook(client, code)
         body = _body(response)
@@ -167,10 +207,13 @@ def _on_alarm(signum, frame):
 
 
 def check_websocket(args):
-    code = _focodes(args)[0]
     seconds = int(os.environ.get("LS_WS_SECONDS", "20"))
-    settings = Settings.from_env()
-    manager = TokenManager(settings)
+    settings, manager, client = _client()
+    try:
+        code = _focodes(args, client)[0]
+    except BaseException:
+        manager.revoke()
+        raise
     realtime = LSWebSocketClient(settings, token_manager=manager, simulation=True)
     received = []
     signal.signal(signal.SIGALRM, _on_alarm)
@@ -226,10 +269,11 @@ def _step(label, response):
 
 
 def check_order_cycle(args):
-    code = _focodes(args)[0]
     settings, manager, client = _client()
     order_no = None
     try:
+        code = _focodes(args, client)[0]
+        time.sleep(PAUSE)
         quote = _body(fetch_current_price(client, code)).get("t2111OutBlock") or {}
         price = Decimal(str(quote.get("price", "0")))
         lower_limit = Decimal(str(quote.get("dnlmtprice", "0")))

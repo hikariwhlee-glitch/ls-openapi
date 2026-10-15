@@ -18,7 +18,7 @@ on:
           - websocket
           - order-cycle
       focode:
-        description: "종목코드 (비우면 Variables 의 LS_FOCODE 사용, order-cycle 은 첫 코드만 사용)"
+        description: "종목코드 (비우면 t8467 마스터에서 월물을 조회, 실패 시 Variables 의 LS_FOCODE 사용. 단일 종목 항목은 첫 코드만 사용)"
         required: false
       confirm:
         description: "order-cycle 은 모의투자 주문을 실제로 제출·정정·취소합니다. 진행하려면 ORDER 를 입력"
