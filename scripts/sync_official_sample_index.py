@@ -80,14 +80,14 @@ def main() -> None:
     INDEX_PATH.parent.mkdir(parents=True, exist_ok=True)
     DOC_PATH.parent.mkdir(parents=True, exist_ok=True)
     INDEX_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    lines = ["# 국내 선물·옵션 공식 샘플 인덱스", "", f"- 공식 API 서비스: [{MENU_URL}]({MENU_URL})", f"- 가이드 버전: `{guide.get('version')}`", f"- TR: {len(records)}개", "- 각 링크에서 공식 샘플 언어(Python·Java·JavaScript)를 선택할 수 있습니다.", "- 이 저장소는 공식 샘플 코드를 복사해 재배포하지 않고, TR별 공식 페이지 링크와 검색용 메타데이터를 제공합니다.", ""]
+    lines = ["# 국내 선물·옵션 공식 샘플 인덱스", "", f"- 공식 API 서비스: [{MENU_URL}]({MENU_URL})", f"- 가이드 버전: `{guide.get('version')}`", f"- TR: {len(records)}개", "- 샘플 JSON 링크는 해당 TR의 Python·Java·JavaScript 코드 예제를 포함한 공식 상세 데이터를 엽니다.", "- 이 저장소는 공식 샘플 코드를 복사해 재배포하지 않고, TR별 공식 페이지 링크와 검색용 메타데이터를 제공합니다.", ""]
     for group in sorted({r["group"] for r in records}):
-        lines.extend([f"## {group}", "", "| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |", "|---|---|---|---|---:|---|---|"])
+        lines.extend([f"## {group}", "", "| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |", "|---|---|---|---|---:|---|---|"])
         for r in records:
             if r["group"] == group:
                 lines.append(f"| `{r['code']}` | {r['name']} | {r['protocol']} | `{r['path']}` | {r['rate_limit_per_second']} | [가이드]({r['official_page']}) | [샘플 데이터]({r['sample_data']}) |")
         lines.append("")
-    lines += ["## 이용 방법", "", "공식 페이지에서 TR을 선택하고 Python, Java, JavaScript 중 원하는 언어 탭의 코드를 확인하세요. 예제의 인증 값과 요청값을 본인 환경에 맞게 설정한 뒤, 특히 주문 API는 실계좌 주문이 발생하지 않도록 토큰과 계좌 환경을 확인해야 합니다.", "", f"> 출처: [LS증권 API 서비스]({MENU_URL}). 명세 필드 표는 [공식 명세 스냅샷](../specs/domestic-futures-options.json)을 참고하세요.", ""]
+    lines += ["## 이용 방법", "", "샘플 JSON 링크에서 해당 TR의 `codeSamples` 안에 있는 Python, Java, JavaScript 코드를 확인하세요. 공식 가이드 링크는 해당 TR이 속한 API 그룹 페이지를 엽니다. 예제의 인증 값과 요청값을 본인 환경에 맞게 설정한 뒤, 특히 주문 API는 실계좌 주문이 발생하지 않도록 토큰과 계좌 환경을 확인해야 합니다.", "", f"> 출처: [LS증권 API 서비스]({MENU_URL}). 명세 필드 표는 [공식 명세 스냅샷](../specs/domestic-futures-options.json)을 참고하세요.", ""]
     DOC_PATH.write_text("\n".join(lines), encoding="utf-8")
     print(json.dumps({"guide_version": guide.get("version"), "transactions": len(records), "groups": len(apis), "markdown_bytes": DOC_PATH.stat().st_size, "index_bytes": INDEX_PATH.stat().st_size}, ensure_ascii=False, indent=2))
 

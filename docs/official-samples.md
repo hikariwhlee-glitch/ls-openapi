@@ -3,12 +3,12 @@
 - 공식 API 서비스: [https://openapi.ls-sec.co.kr/apiservice](https://openapi.ls-sec.co.kr/apiservice)
 - 가이드 버전: `20261012053652748`
 - TR: 91개
-- 각 링크에서 공식 샘플 언어(Python·Java·JavaScript)를 선택할 수 있습니다.
+- 샘플 JSON 링크는 해당 TR의 Python·Java·JavaScript 코드 예제를 포함한 공식 상세 데이터를 엽니다.
 - 이 저장소는 공식 샘플 코드를 복사해 재배포하지 않고, TR별 공식 페이지 링크와 검색용 메타데이터를 제공합니다.
 
 ## [선물/옵션] 계좌
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `CCENQ10100` | KRX야간파생 주문가능수량 조회 | REST | `/futureoption/accno` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENQ10100?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a) |
 | `CCENQ30100` | KRX야간파생 주문/체결내역 조회 | REST | `/futureoption/accno` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=09a668df-d7e8-4b5c-977f-91d1429b931a&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/faa66357-b33b-46c7-91d8-aa4894b56f37?type=rest&api=09a668df-d7e8-4b5c-977f-91d1429b931a) |
@@ -27,13 +27,13 @@
 
 ## [선물/옵션] 기타
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `MMDAQ91200` | 파생상품증거금율조회 | REST | `/futureoption/etc` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=98373ce4-042a-4fc8-85ef-b9b8f64101ce&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/p4n047y4-38z1-r18a-rchs-a380e285yuyz?type=rest&api=98373ce4-042a-4fc8-85ef-b9b8f64101ce) |
 
 ## [선물/옵션] 시세
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `t2106` | 선물/옵션현재가시세메모 | REST | `/futureoption/market-data` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/q87i3436-4x1f-88ye-2tmn-ofc4q8g05hyi?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f) |
 | `t2111` | 선물/옵션현재가(시세)조회 | REST | `/futureoption/market-data` | 10 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=9f467798-6ce6-4d31-ab93-5a0e2860f89f&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/60nl3560-26kl-g02t-64x7-o0oxo8n56qsa?type=rest&api=9f467798-6ce6-4d31-ab93-5a0e2860f89f) |
@@ -68,7 +68,7 @@
 
 ## [선물/옵션] 실시간 시세
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `C01` | 선물주문체결 | WEBSOCKET | `/websocket` | - | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/0irot5h7-6240-6s6d-0qk8-l8ui5vaai4v7?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462) |
 | `C02` | KRX야간파생 선물체결 | WEBSOCKET | `/websocket` | - | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=57936c91-b49d-4702-b7f6-3935c6859462&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-000000000C02?type=rest&api=57936c91-b49d-4702-b7f6-3935c6859462) |
@@ -104,7 +104,7 @@
 
 ## [선물/옵션] 주문
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `CCENT00100` | KRX야간파생 위탁 신규 주문 | REST | `/futureoption/order` | 5 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENT00100?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27) |
 | `CCENT00200` | KRX야간파생 위탁 정정 주문 | REST | `/futureoption/order` | 5 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-00CCENT00200?type=rest&api=b579d38a-3ce5-4b1b-b94e-b0c4bbbf1d27) |
@@ -115,7 +115,7 @@
 
 ## [선물/옵션] 차트
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `t2216` | 선물옵션틱분별체결조회차트 | REST | `/futureoption/chart` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/v3tpt4yr-20bu-dnu2-1080-27u3gf713q1o?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b) |
 | `t8461` | KRX야간파생 틱분별조회(API용) | REST | `/futureoption/chart` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=a9b39b08-25c2-427d-848b-675c6228a92b&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/futroptn-0000-0000-0000-0000000t8461?type=rest&api=a9b39b08-25c2-427d-848b-675c6228a92b) |
@@ -125,7 +125,7 @@
 
 ## [선물/옵션] 투자자
 
-| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드 | 예제 원본 JSON |
+| TR | 이름 | 프로토콜 | 경로 | 초당 제한 | 공식 가이드(그룹) | 샘플 JSON(TR별) |
 |---|---|---|---|---:|---|---|
 | `t2541` | 상품선물투자자매매동향(실시간) | REST | `/futureoption/investor` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/8fa18e6a-d6vg-76f4-zu1g-bgizg8o00vfu?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669) |
 | `t2545` | 상품선물투자자매매동향(챠트용) | REST | `/futureoption/investor` | 1 | [가이드](https://openapi.ls-sec.co.kr/apiservice?api_id=47005ce6-8500-4a3d-ad6c-f96ec3251669&group_id=2f1eea77-5606-4512-93c6-31b21d2ece90) | [샘플 데이터](https://openapi.ls-sec.co.kr/guide/api/ng2n026k-1521-364u-wfpv-3s61g3t232l7?type=rest&api=47005ce6-8500-4a3d-ad6c-f96ec3251669) |
@@ -134,7 +134,7 @@
 
 ## 이용 방법
 
-공식 페이지에서 TR을 선택하고 Python, Java, JavaScript 중 원하는 언어 탭의 코드를 확인하세요. 예제의 인증 값과 요청값을 본인 환경에 맞게 설정한 뒤, 특히 주문 API는 실계좌 주문이 발생하지 않도록 토큰과 계좌 환경을 확인해야 합니다.
+샘플 JSON 링크에서 해당 TR의 `codeSamples` 안에 있는 Python, Java, JavaScript 코드를 확인하세요. 공식 가이드 링크는 해당 TR이 속한 API 그룹 페이지를 엽니다. 예제의 인증 값과 요청값을 본인 환경에 맞게 설정한 뒤, 특히 주문 API는 실계좌 주문이 발생하지 않도록 토큰과 계좌 환경을 확인해야 합니다.
 
 > 출처: [LS증권 API 서비스](https://openapi.ls-sec.co.kr/apiservice). 명세 필드 표는 [공식 명세 스냅샷](../specs/domestic-futures-options.json)을 참고하세요.
 
