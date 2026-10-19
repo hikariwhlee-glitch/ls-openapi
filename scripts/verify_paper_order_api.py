@@ -92,8 +92,7 @@ def order_number(response: dict[str, Any], tr_code: str) -> int:
 def position(client: LSOpenAPI, short_code: str) -> dict[str, Any] | None:
     result = client.call("t0441", {"cts_expcode": "", "cts_medocd": ""})
     matches = [
-        row
-        for row in rows(result.get("t0441OutBlock1"))
+        row for row in rows(result.get("t0441OutBlock1"))
         if str(row.get("expcode", "")).strip() == short_code
     ]
     if len(matches) > 1:
@@ -114,11 +113,7 @@ def require_open_unfilled(row: dict[str, Any] | None, label: str) -> None:
 def cancel_one(client: LSOpenAPI, short_code: str, api_code: str, order_no: int) -> None:
     client.call(
         "CFOAT00300",
-        {
-            "FnoIsuNo": api_code,
-            "OrgOrdNo": order_no,
-            "CancQty": 1,
-        },
+        {"FnoIsuNo": api_code, "OrgOrdNo": order_no, "CancQty": 1},
     )
     row = wait_order(client, short_code, order_no)
     if row is None or number(row, "cheqty") != 0 or number(row, "ordrem") != 0:
@@ -140,8 +135,6 @@ def main() -> int:
     client: LSOpenAPI | None = None
     try:
         client = LSOpenAPI(allow_orders=True)
-
-        # Revalidate position and direction immediately before any order call.
         holding = position(client, short_code)
         if holding is None:
             raise RuntimeError(f"대상 종목 {short_code}의 보유 잔고가 없습니다.")
@@ -155,50 +148,49 @@ def main() -> int:
             f"청산 가능 {number(holding, 'cqty'):g}계약; 검증 주문은 1계약"
         )
 
-        # Limit this example to index futures supported by t8467.
         master = client.call("t8467", {"gubun": ""})
         candidates = [
-            row
-            for row in rows(master.get("t8467OutBlock"))
+            row for row in rows(master.get("t8467OutBlock"))
             if str(row.get("shcode", "")).strip() == short_code
         ]
         if len(candidates) != 1:
             raise RuntimeError("지수선물 마스터에서 대상 코드를 하나로 매핑하지 못했습니다.")
         product = candidates[0]
         api_code = str(product.get("expcode", "")).strip() or short_code
-        upper_limit = number(product, "uplmtprice")
-        if not api_code or not (8 <= len(api_code) <= 12) or upper_limit <= 0:
-            raise RuntimeError("종목 주문코드 또는 상한가를 확인하지 못했습니다.")
+        if not api_code or not (8 <= len(api_code) <= 12):
+            raise RuntimeError("종목 주문코드를 확인하지 못했습니다.")
 
         quote = client.call("t2112", {"shcode": short_code}).get("t2112OutBlock", {})
         if not isinstance(quote, dict):
             raise RuntimeError("현재 호가 응답 구조가 올바르지 않습니다.")
         offer = number(quote, "offerho1")
         bid = number(quote, "bidho1")
-        if offer <= 0 or bid <= 0 or upper_limit <= offer:
-            raise RuntimeError(
-                f"높은 지정가 미체결 조건을 확인하지 못했습니다 "
-                f"(현재 매도1={offer:g}, 매수1={bid:g}, 상한가={upper_limit:g})."
-            )
-        print(f"종목 확인: {str(product.get('hname', '')).strip() or short_code}, 상한가 지정가 {upper_limit:g}")
+        offer_prices = [number(quote, f"offerho{i}") for i in range(1, 6)]
+        bid_prices = [number(quote, f"bidho{i}") for i in range(1, 6)]
+        ladder = sorted({price for price in offer_prices + bid_prices if price > 0})
+        gaps = [right - left for left, right in zip(ladder, ladder[1:]) if right > left]
+        if offer <= 0 or bid <= 0 or not gaps:
+            raise RuntimeError("현재 호가와 최소 호가 단위를 확인하지 못했습니다.")
+        tick = min(gaps)
+        high_limit = round(offer + tick * 10, 8)
+        if high_limit <= offer or high_limit <= bid:
+            raise RuntimeError("미체결을 기대할 높은 지정가를 계산하지 못했습니다.")
+        print(
+            f"종목 확인: {str(product.get('hname', '')).strip() or short_code}, "
+            f"매도1 {offer:g}, 호가단위 {tick:g}, 검증 지정가 {high_limit:g}"
+        )
 
-        # Never stack an order on top of an existing open order for this contract.
         existing = [row for row in order_rows(client, short_code) if number(row, "ordrem") > 0]
         if existing:
             raise RuntimeError(f"대상 종목에 기존 미체결 주문 {len(existing)}건이 있어 중단합니다.")
 
         first = client.call(
             "CFOAT00100",
-            {
-                "FnoIsuNo": api_code,
-                "BnsTpCode": "1",
-                "FnoOrdprcPtnCode": "00",
-                "FnoOrdPrc": upper_limit,
-                "OrdQty": 1,
-            },
+            {"FnoIsuNo": api_code, "BnsTpCode": "1", "FnoOrdprcPtnCode": "00",
+             "FnoOrdPrc": high_limit, "OrdQty": 1},
         )
         first_no = order_number(first, "CFOAT00100")
-        print(f"첫 매도 지정가 접수: 상한가 {upper_limit:g}, 수량 1, 주문번호 끝자리 {first_no % 10000:04d}")
+        print(f"첫 매도 지정가 접수: 가격 {high_limit:g}, 수량 1, 주문번호 끝자리 {first_no % 10000:04d}")
         state = wait_order(client, short_code, first_no)
         if state is None or number(state, "cheqty") != 0:
             raise RuntimeError("첫 주문이 미체결로 확인되지 않았습니다. 두 번째 주문은 보내지 않았습니다.")
@@ -206,37 +198,23 @@ def main() -> int:
         cancel_one(client, short_code, api_code, first_no)
 
         holding = position(client, short_code)
-        if (
-            holding is None
-            or str(holding.get("medosu", "")).strip() not in {"매수", "1", "B"}
-            or number(holding, "cqty") < 1
-        ):
+        if holding is None or str(holding.get("medosu", "")).strip() not in {"매수", "1", "B"} or number(holding, "cqty") < 1:
             raise RuntimeError("첫 주문 취소 후 매수 보유분 1계약이 확인되지 않아 재주문을 중단합니다.")
 
         second = client.call(
             "CFOAT00100",
-            {
-                "FnoIsuNo": api_code,
-                "BnsTpCode": "1",
-                "FnoOrdprcPtnCode": "00",
-                "FnoOrdPrc": upper_limit,
-                "OrdQty": 1,
-            },
+            {"FnoIsuNo": api_code, "BnsTpCode": "1", "FnoOrdprcPtnCode": "00",
+             "FnoOrdPrc": high_limit, "OrdQty": 1},
         )
         second_no = order_number(second, "CFOAT00100")
-        print(f"재주문 접수: 상한가 {upper_limit:g}, 수량 1, 주문번호 끝자리 {second_no % 10000:04d}")
+        print(f"재주문 접수: 가격 {high_limit:g}, 수량 1, 주문번호 끝자리 {second_no % 10000:04d}")
         state = wait_order(client, short_code, second_no)
         require_open_unfilled(state, "재주문")
 
         amended = client.call(
             "CFOAT00200",
-            {
-                "FnoIsuNo": api_code,
-                "OrgOrdNo": second_no,
-                "FnoOrdprcPtnCode": "03",
-                "FnoOrdPrc": 0,
-                "MdfyQty": 1,
-            },
+            {"FnoIsuNo": api_code, "OrgOrdNo": second_no, "FnoOrdprcPtnCode": "03",
+             "FnoOrdPrc": 0, "MdfyQty": 1},
         )
         amended_no = order_number(amended, "CFOAT00200")
         print(f"시장가 정정 접수: 원주문 끝자리 {second_no % 10000:04d}, 정정주문 끝자리 {amended_no % 10000:04d}")
@@ -251,15 +229,11 @@ def main() -> int:
         if final_state is None:
             raise RuntimeError("시장가 정정 후 주문 상태 확인이 안 됩니다. 수동으로 미체결을 확인하세요.")
         if number(final_state, "cheqty") < 1:
-            remaining = number(final_state, "ordrem")
-            if remaining > 0:
+            if number(final_state, "ordrem") > 0:
                 cancel_one(client, short_code, api_code, amended_no)
             raise RuntimeError("시장가 정정 후 체결을 확인하지 못했습니다. 잔여 주문은 취소했습니다.")
 
-        print(
-            f"체결 확인: 체결수량 {number(final_state, 'cheqty'):g}, "
-            f"체결가격 {number(final_state, 'cheprice'):g}"
-        )
+        print(f"체결 확인: 체결수량 {number(final_state, 'cheqty'):g}, 체결가격 {number(final_state, 'cheprice'):g}")
         updated = position(client, short_code)
         remaining_position = number(updated, "jqty") if updated else 0
         if remaining_position > number(holding, "jqty") - 1:
@@ -275,4 +249,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
