@@ -28,6 +28,11 @@ class LSWebSocket:
         self.connection.send(json.dumps({"header":{"token":self.rest.token(),"tr_type":"2"},"body":{"tr_cd":tr_code,"tr_key":key}}, ensure_ascii=False))
     def recv(self) -> Any:
         if not self.connection: raise RuntimeError("Call connect() first")
-        return json.loads(self.connection.recv())
+        raw = self.connection.recv()
+        try:
+            return json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            # LS realtime market data may arrive as a delimited text frame.
+            return raw
     def close(self) -> None:
         if self.connection: self.connection.close(); self.connection = None
