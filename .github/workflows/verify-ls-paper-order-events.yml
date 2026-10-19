@@ -1,0 +1,48 @@
+name: Verify LS paper futures order events and lifecycle
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_paper_order:
+        description: "Type I_ACKNOWLEDGE_PAPER_SIMULATED_TRADING to sell-to-close one simulated futures contract"
+        type: string
+        required: true
+        default: ""
+      target_code:
+        description: "Held index futures code; the script stops unless one long contract is available to close"
+        type: string
+        required: true
+        default: "A0173000"
+      event_timeout_seconds:
+        description: "Maximum event stream observation time (60-600 seconds)"
+        type: string
+        required: true
+        default: "240"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ls-paper-order-lifecycle
+  cancel-in-progress: false
+
+jobs:
+  paper-order-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Python package
+        run: python -m pip install -e .
+      - name: Verify order events and one-contract paper lifecycle
+        env:
+          LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
+          LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
+          LS_ORDER_CONFIRM: ${{ inputs.confirm_paper_order }}
+          LS_ORDER_TARGET_CODE: ${{ inputs.target_code }}
+          LS_ORDER_EVENT_TIMEOUT_SECONDS: ${{ inputs.event_timeout_seconds }}
+          PYTHONUNBUFFERED: "1"
+        run: python scripts/verify_paper_order_events.py
