@@ -99,6 +99,7 @@ def main() -> int:
                     print(f"구독 승인: {tr_code} ({note})")
                     if len(acknowledged) == len(EVENT_TRS):
                         ready.set()
+                        break
                     continue
                 if kind == "event" and tr_code in counts:
                     with lock:
