@@ -43,7 +43,10 @@ class LSOpenAPI:
 
     @staticmethod
     def _json(
-        response: requests.Response, *, accepted_codes: tuple[str, ...] = ()
+        response: requests.Response,
+        *,
+        accepted_codes: tuple[str, ...] = (),
+        accept_mock_order_success: bool = False,
     ) -> dict[str, Any]:
         try: data = response.json()
         except ValueError: data = {"raw": response.text}
@@ -51,8 +54,14 @@ class LSOpenAPI:
             raise LSAPIError(f"LS API HTTP {response.status_code}: {data}", status_code=response.status_code, payload=data)
         if isinstance(data, dict):
             code = str(data.get("rsp_cd", ""))
+            message = str(data.get("rsp_msg", "")).strip()
             accepted = ("00000", "0", "OK", *accepted_codes)
-            if code and code not in accepted:
+            mock_order_completed = (
+                accept_mock_order_success
+                and message.startswith("모의투자 ")
+                and message.endswith("주문이 완료 되었습니다.")
+            )
+            if code and code not in accepted and not mock_order_completed:
                 raise LSAPIError(f"LS API error {code}: {data.get('rsp_msg', data)}", status_code=response.status_code, payload=data)
             return data
         return {"data": data}
@@ -92,10 +101,9 @@ class LSOpenAPI:
         if self.mac_address: headers["mac_address"] = self.mac_address
         self._respect_rate_limit(tr_code, tr["rate_limit_per_sec"])
         response = self.session.post(self.base_url + tr["path"], json=dict(body), headers=headers, timeout=self.timeout)
-        # LS mock futures order APIs report accepted orders with rsp_cd 00039.
-        # This code is accepted only for catalog entries explicitly marked as orders.
-        accepted_codes = ("00039",) if tr["is_order"] else ()
-        data = self._json(response, accepted_codes=accepted_codes)
+        # LS mock futures order APIs use nonzero rsp_cd values for successful
+        # new, amend, and cancel operations; accept only explicit completion messages.
+        data = self._json(response, accept_mock_order_success=tr["is_order"])
         data["_continuation"] = {"tr_cont":response.headers.get("tr_cont", "N"), "tr_cont_key":response.headers.get("tr_cont_key", "")}
         return data
 
