@@ -57,15 +57,6 @@ def main() -> int:
         print("중단: 명시적인 모의투자 주문 확인 문자열이 없습니다.")
         return 2
 
-    try:
-        duration = int(os.getenv("LS_ORDER_EVENT_TIMEOUT_SECONDS", "240"))
-    except ValueError:
-        print("중단: LS_ORDER_EVENT_TIMEOUT_SECONDS는 정수여야 합니다.")
-        return 2
-    if duration < 60 or duration > 600:
-        print("중단: 주문 이벤트 관찰시간은 60~600초여야 합니다.")
-        return 2
-
     rest = LSOpenAPI(timeout=10)
     feed = LSWebSocket(rest, simulated=True)
     stop = threading.Event()
