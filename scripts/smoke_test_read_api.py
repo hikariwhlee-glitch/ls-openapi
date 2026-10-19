@@ -1,36 +1,49 @@
-"""One-shot read-only verification for GitHub Actions secrets."""
+"""Read-only verification for public futures/options master data."""
 from __future__ import annotations
+
 import sys
+
 from ls_openapi import LSOpenAPI
+
+
+CHECKS = (
+    ("t8426", {"dummy": ""}, "상품선물 마스터"),
+    ("t8467", {"gubun": ""}, "지수선물 마스터"),
+    ("t8433", {"dummy": ""}, "지수옵션 마스터"),
+)
 
 
 def main() -> int:
     try:
         client = LSOpenAPI()
-        # Public futures product master lookup; no account or order operation.
-        result = client.call("t8426", {"dummy": ""})
-        response_fields = set(result) - {"_continuation"}
-        if not response_fields:
-            print("Read-only API returned an empty response.")
-            return 1
-        records = result.get("t8426OutBlock", [])
-        if isinstance(records, dict):
-            records = [records]
-        if not isinstance(records, list):
-            records = []
+        results = []
+        for tr_code, params, label in CHECKS:
+            result = client.call(tr_code, params)
+            block_name = f"{tr_code}OutBlock"
+            records = result.get(block_name, [])
+            if isinstance(records, dict):
+                records = [records]
+            if not isinstance(records, list):
+                records = []
+            # A successful API response is meaningful even when a master is empty
+            # outside its active session, but a missing expected block is not.
+            if block_name not in result:
+                print(f"조회 실패: {label}({tr_code}), 예상 응답 블록이 없습니다.")
+                return 1
+            results.append((tr_code, label, records))
     except Exception as exc:
-        # Do not print exception text or response payloads to public Actions logs.
-        print(f"Read-only API verification failed ({type(exc).__name__}).")
+        # Keep exception text and response payloads out of public Actions logs.
+        print(f"읽기 전용 API 검증 실패 ({type(exc).__name__}).")
         return 1
-    print(f"조회 성공: 상품선물 마스터(t8426), 응답 블록 {len(response_fields)}개.")
-    print(f"조회된 상품 수: {len(records)}개")
-    for row in records[:5]:
-        name = str(row.get("hname", "")).strip()
-        code = str(row.get("shcode", "")).strip()
-        if name or code:
-            print(f"- {name or '상품명 없음'} (단축코드 {code or '없음'})")
-    if records and not any(str(row.get("hname", "")).strip() or str(row.get("shcode", "")).strip() for row in records[:5]):
-        print("상품 행은 받았지만 이름·단축코드 필드가 비어 있습니다.")
+
+    print("읽기 전용 API 검증 성공: 공개 상품 마스터 3종")
+    for tr_code, label, records in results:
+        print(f"- {label}({tr_code}): {len(records)}개")
+        for row in records[:2]:
+            name = str(row.get("hname", "")).strip()
+            code = str(row.get("shcode", "")).strip()
+            if name or code:
+                print(f"  예: {name or '상품명 없음'} / 단축코드 {code or '없음'}")
     return 0
 
 
