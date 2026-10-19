@@ -1,4 +1,4 @@
-"""Read-only verification for public futures/options master data."""
+"""Verify read-only futures market data using a code from the index futures master."""
 from __future__ import annotations
 
 import sys
@@ -6,44 +6,97 @@ import sys
 from ls_openapi import LSOpenAPI
 
 
-CHECKS = (
-    ("t8426", {"dummy": ""}, "상품선물 마스터"),
-    ("t8467", {"gubun": ""}, "지수선물 마스터"),
-    ("t8433", {"dummy": ""}, "지수옵션 마스터"),
-)
+def records(value):
+    if isinstance(value, dict):
+        return [value]
+    return value if isinstance(value, list) else []
 
 
 def main() -> int:
+    client = LSOpenAPI()
+    failures = 0
     try:
-        client = LSOpenAPI()
-        results = []
-        for tr_code, params, label in CHECKS:
-            result = client.call(tr_code, params)
-            block_name = f"{tr_code}OutBlock"
-            records = result.get(block_name, [])
-            if isinstance(records, dict):
-                records = [records]
-            if not isinstance(records, list):
-                records = []
-            # A successful API response is meaningful even when a master is empty
-            # outside its active session, but a missing expected block is not.
-            if block_name not in result:
-                print(f"조회 실패: {label}({tr_code}), 예상 응답 블록이 없습니다.")
-                return 1
-            results.append((tr_code, label, records))
+        master = client.call("t8467", {"gubun": ""})
+        products = records(master.get("t8467OutBlock"))
+        if not products:
+            print("실패: 지수선물 마스터(t8467)에서 시세 조회용 종목코드를 가져오지 못했습니다.")
+            return 1
+        product = next((row for row in products if row.get("shcode")), None)
+        if product is None:
+            print("실패: 지수선물 마스터 응답에 단축코드가 없습니다.")
+            return 1
+        code = str(product["shcode"]).strip()
+        name = str(product.get("hname", "")).strip()
     except Exception as exc:
-        # Keep exception text and response payloads out of public Actions logs.
-        print(f"읽기 전용 API 검증 실패 ({type(exc).__name__}).")
+        print(f"실패: 지수선물 종목 준비 단계 ({type(exc).__name__}).")
         return 1
 
-    print("읽기 전용 API 검증 성공: 공개 상품 마스터 3종")
-    for tr_code, label, records in results:
-        print(f"- {label}({tr_code}): {len(records)}개")
-        for row in records[:2]:
-            name = str(row.get("hname", "")).strip()
-            code = str(row.get("shcode", "")).strip()
-            if name or code:
-                print(f"  예: {name or '상품명 없음'} / 단축코드 {code or '없음'}")
+    print(f"시세 조회 종목: {name or '지수선물'} ({code})")
+
+    # Each check is read-only. Keep going after endpoint errors so the run
+    # reports the status of every feature without exposing response payloads.
+    checks = (
+        ("t2111", "현재가", {"focode": code}, "t2111OutBlock"),
+        ("t2112", "호가", {"shcode": code}, "t2112OutBlock"),
+        (
+            "t2212",
+            "시간대별 체결",
+            {"focode": code, "cvolume": "0", "stime": "0000", "etime": "2359", "cts_time": ""},
+            "t2212OutBlock1",
+        ),
+        (
+            "t2214",
+            "기간별 시세",
+            {"shcode": code, "futcheck": "0", "date": "", "cts_code": "", "lastdate": "", "cnt": "10"},
+            "t2214OutBlock1",
+        ),
+        (
+            "t8464",
+            "틱 차트",
+            {
+                "shcode": code,
+                "ncnt": "1",
+                "qrycnt": "10",
+                "nday": "0",
+                "sdate": "",
+                "stime": "",
+                "edate": "99999999",
+                "etime": "",
+                "cts_date": "",
+                "cts_time": "",
+                "comp_yn": "N",
+            },
+            "t8464OutBlock1",
+        ),
+    )
+
+    for tr_code, label, params, output_block in checks:
+        try:
+            result = client.call(tr_code, params)
+            if output_block not in result:
+                print(f"실패: {label}({tr_code}), 응답 블록이 없습니다.")
+                failures += 1
+                continue
+            value = result[output_block]
+            rows = records(value)
+            if tr_code == "t2111" and isinstance(value, dict):
+                price = str(value.get("price", "")).strip()
+                print(f"성공: {label}({tr_code})" + (f", 현재가 {price}" if price else ""))
+            elif tr_code == "t2112" and isinstance(value, dict):
+                ask = str(value.get("offerho1", "")).strip()
+                bid = str(value.get("bidho1", "")).strip()
+                detail = f", 매도1호가 {ask or '-'}, 매수1호가 {bid or '-'}"
+                print(f"성공: {label}({tr_code}){detail}")
+            else:
+                print(f"성공: {label}({tr_code}), 응답 행 {len(rows)}개")
+        except Exception as exc:
+            print(f"실패: {label}({tr_code}) ({type(exc).__name__}).")
+            failures += 1
+
+    if failures:
+        print(f"시세 조회 검증 완료: 성공 {len(checks) - failures}/{len(checks)}, 실패 {failures}개.")
+        return 1
+    print(f"시세 조회 검증 성공: {len(checks)}/{len(checks)}개 기능.")
     return 0
 
 
