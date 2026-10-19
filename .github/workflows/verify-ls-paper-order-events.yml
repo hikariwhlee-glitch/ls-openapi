@@ -13,11 +13,6 @@ on:
         type: string
         required: true
         default: "A0173000"
-      event_timeout_seconds:
-        description: "Maximum event stream observation time (60-600 seconds)"
-        type: string
-        required: true
-        default: "240"
 
 permissions:
   contents: read
@@ -43,6 +38,5 @@ jobs:
           LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
           LS_ORDER_CONFIRM: ${{ inputs.confirm_paper_order }}
           LS_ORDER_TARGET_CODE: ${{ inputs.target_code }}
-          LS_ORDER_EVENT_TIMEOUT_SECONDS: ${{ inputs.event_timeout_seconds }}
           PYTHONUNBUFFERED: "1"
         run: python scripts/verify_paper_order_events.py
