@@ -22,3 +22,8 @@ jobs:
           LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
           LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
         run: python scripts/smoke_test_read_api.py
+      - name: Query futures account balance (read-only, redacted)
+        env:
+          LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
+          LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
+        run: python scripts/smoke_test_account_read_api.py
