@@ -2,6 +2,7 @@
 from __future__ import annotations
 import os
 import time
+import threading
 from typing import Any, Iterator, Mapping
 import requests
 from .catalog import TR_CATALOG
@@ -25,6 +26,8 @@ class LSOpenAPI:
         self.session = requests.Session()
         self._token: str | None = None
         self._token_expires = 0.0
+        self._last_call: dict[str, float] = {}
+        self._rate_lock = threading.Lock()
 
     def token(self) -> str:
         if self._token and time.time() < self._token_expires - 60:
@@ -35,7 +38,7 @@ class LSOpenAPI:
         if not token:
             raise LSAPIError("Token response did not include access_token", status_code=response.status_code, payload=data)
         self._token = token
-        self._token_expires = time.time() + int(data.get("expires_in", 3600))
+        self._token_expires = time.time() + int(data.get("expires_in", data.get("expire_in", 3600)))
         return token
 
     @staticmethod
@@ -50,6 +53,21 @@ class LSOpenAPI:
                 raise LSAPIError(f"LS API error {code}: {data.get('rsp_msg', data)}", status_code=response.status_code, payload=data)
             return data
         return {"data": data}
+
+    def _respect_rate_limit(self, tr_code: str, rate: str) -> None:
+        try:
+            per_second = float(rate)
+        except (TypeError, ValueError):
+            return
+        if per_second <= 0:
+            return
+        interval = 1.0 / per_second
+        with self._rate_lock:
+            now = time.monotonic()
+            wait = interval - (now - self._last_call.get(tr_code, 0.0))
+            if wait > 0:
+                time.sleep(wait)
+            self._last_call[tr_code] = time.monotonic()
 
     def call(self, tr_code: str, params: Mapping[str, Any] | None = None, *, body: Mapping[str, Any] | None = None, continuation_key: str = "", continuation: bool = False) -> dict[str, Any]:
         """Call a REST TR. `body` accepts full block mappings; `params` fills a single input block."""
@@ -69,6 +87,7 @@ class LSOpenAPI:
             body = {blocks[0]: dict(params or {})}
         headers = {"content-type":"application/json; charset=utf-8", "authorization":"Bearer " + self.token(), "tr_cd":tr_code, "tr_cont":"Y" if continuation else "N", "tr_cont_key":continuation_key}
         if self.mac_address: headers["mac_address"] = self.mac_address
+        self._respect_rate_limit(tr_code, tr["rate_limit_per_sec"])
         response = self.session.post(self.base_url + tr["path"], json=dict(body), headers=headers, timeout=self.timeout)
         data = self._json(response)
         data["_continuation"] = {"tr_cont":response.headers.get("tr_cont", "N"), "tr_cont_key":response.headers.get("tr_cont_key", "")}
