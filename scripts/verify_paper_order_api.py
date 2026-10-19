@@ -211,13 +211,22 @@ def main() -> int:
         state = wait_order(client, short_code, second_no)
         require_open_unfilled(state, "재주문")
 
+        amend_quote = client.call("t2112", {"shcode": short_code}).get("t2112OutBlock", {})
+        if not isinstance(amend_quote, dict):
+            raise RuntimeError("정정 직전 현재 호가 응답 구조가 올바르지 않습니다.")
+        amend_price = number(amend_quote, "bidho1")
+        if amend_price <= 0:
+            raise RuntimeError("정정 직전 매수1호가를 확인하지 못해 주문 정정을 중단합니다.")
         amended = client.call(
             "CFOAT00200",
-            {"FnoIsuNo": api_code, "OrgOrdNo": second_no, "FnoOrdprcPtnCode": "03",
-             "FnoOrdPrc": 0, "MdfyQty": 1},
+            {"FnoIsuNo": api_code, "OrgOrdNo": second_no, "FnoOrdprcPtnCode": "00",
+             "FnoOrdPrc": amend_price, "MdfyQty": 1},
         )
         amended_no = order_number(amended, "CFOAT00200")
-        print(f"시장가 정정 접수: 원주문 끝자리 {second_no % 10000:04d}, 정정주문 끝자리 {amended_no % 10000:04d}")
+        print(
+            f"현재 매수1호가 {amend_price:g}로 지정가 정정 접수: "
+            f"원주문 끝자리 {second_no % 10000:04d}, 정정주문 끝자리 {amended_no % 10000:04d}"
+        )
 
         final_state = None
         for _ in range(POLL_ATTEMPTS):
@@ -227,11 +236,11 @@ def main() -> int:
             time.sleep(POLL_INTERVAL)
 
         if final_state is None:
-            raise RuntimeError("시장가 정정 후 주문 상태 확인이 안 됩니다. 수동으로 미체결을 확인하세요.")
+            raise RuntimeError("현재 매수1호가 정정 후 주문 상태 확인이 안 됩니다. 수동으로 미체결을 확인하세요.")
         if number(final_state, "cheqty") < 1:
             if number(final_state, "ordrem") > 0:
                 cancel_one(client, short_code, api_code, amended_no)
-            raise RuntimeError("시장가 정정 후 체결을 확인하지 못했습니다. 잔여 주문은 취소했습니다.")
+            raise RuntimeError("현재 매수1호가 정정 후 체결을 확인하지 못했습니다. 잔여 주문은 취소했습니다.")
 
         print(f"체결 확인: 체결수량 {number(final_state, 'cheqty'):g}, 체결가격 {number(final_state, 'cheprice'):g}")
         updated = position(client, short_code)
@@ -239,7 +248,7 @@ def main() -> int:
         if remaining_position > number(holding, "jqty") - 1:
             raise RuntimeError("주문 체결은 확인했으나 잔고 감소가 확인되지 않았습니다. 계좌를 다시 확인하세요.")
         print(f"잔고 확인: {short_code} 보유 수량 {remaining_position:g}계약")
-        print("모의투자 주문 흐름 검증 완료: 신규 → 취소 → 재주문 → 시장가 정정 → 체결")
+        print("모의투자 주문 흐름 검증 완료: 신규 → 취소 → 재주문 → 현재 매수1호가 정정 → 체결")
         return 0
     except Exception as exc:
         detail = safe_error(exc, client) if client is not None else type(exc).__name__
