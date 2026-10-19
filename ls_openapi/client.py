@@ -27,6 +27,7 @@ class LSOpenAPI:
         self._token: str | None = None
         self._token_expires = 0.0
         self._last_call: dict[str, float] = {}
+        self._last_any_call = 0.0
         self._rate_lock = threading.Lock()
 
     def token(self) -> str:
@@ -73,13 +74,20 @@ class LSOpenAPI:
             return
         if per_second <= 0:
             return
-        interval = 1.0 / per_second
+        # Leave a margin for LS's account-level gateway limiter as well as
+        # each TR's documented rate. A per-TR-only delay can still burst across
+        # several different TRs in one workflow.
+        interval = max(1.05, 1.0 / per_second)
         with self._rate_lock:
             now = time.monotonic()
-            wait = interval - (now - self._last_call.get(tr_code, 0.0))
+            per_tr_wait = interval - (now - self._last_call.get(tr_code, 0.0))
+            global_wait = interval - (now - self._last_any_call)
+            wait = max(per_tr_wait, global_wait, 0.0)
             if wait > 0:
                 time.sleep(wait)
-            self._last_call[tr_code] = time.monotonic()
+            now = time.monotonic()
+            self._last_call[tr_code] = now
+            self._last_any_call = now
 
     def call(self, tr_code: str, params: Mapping[str, Any] | None = None, *, body: Mapping[str, Any] | None = None, continuation_key: str = "", continuation: bool = False) -> dict[str, Any]:
         """Call a REST TR. `body` accepts full block mappings; `params` fills a single input block."""
