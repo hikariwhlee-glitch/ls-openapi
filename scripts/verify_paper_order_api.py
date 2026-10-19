@@ -40,6 +40,8 @@ def safe_error(exc: Exception, client: LSOpenAPI) -> str:
             if secret:
                 message = message.replace(secret, "[redacted]")
         return f"LS API {code}: {message[:180]}" if code or message else "LS API 오류"
+    if isinstance(exc, RuntimeError):
+        return " ".join(str(exc).split())[:180] or type(exc).__name__
     return type(exc).__name__
 
 
