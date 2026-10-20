@@ -1,0 +1,36 @@
+name: Verify LSFutureClient read-only API
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_code:
+        description: "Futures/options code used for quote and order-book lookups"
+        type: string
+        required: true
+        default: "A016C000"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ls-future-client-readonly
+  cancel-in-progress: false
+
+jobs:
+  sdk-readonly-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Python package
+        run: python -m pip install -e .
+      - name: Call LS APIs through LSFutureClient (read-only)
+        env:
+          LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
+          LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
+          LS_FUTURES_CODE: ${{ inputs.target_code }}
+          PYTHONUNBUFFERED: "1"
+        run: python scripts/verify_sdk_readonly_api.py
