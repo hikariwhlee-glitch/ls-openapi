@@ -10,6 +10,7 @@ LS증권 공식 API 서비스는 국내 선물·옵션의 TR 명세와 여러 �
 - [공식 명세 JSON 스냅샷](specs/domestic-futures-options.json)
 - [사람이 읽는 전체 명세](docs/domestic-futures-options.md)
 - [LS증권 API 서비스](https://openapi.ls-sec.co.kr/apiservice)
+- [Python SDK 사용 안내](docs/sdk.md)
 
 샘플 JSON 링크는 LS증권 공식 사이트의 샘플 데이터를 엽니다. 그 데이터에 Python 외 언어의 공식 예제가 포함될 수 있지만, 이 저장소가 제공하는 코드는 Python뿐입니다. 공식 코드 원문은 복제하지 않고 출처 링크와 검색용 인덱스를 제공합니다.
 
@@ -26,9 +27,28 @@ $env:LS_FUTURES_CODE="조회할 선물 종목코드"
 python examples/futures_quote.py
 ```
 
-`t2111` 현재가와 `t8464` 차트 조회, `FC9` 실시간 구독 예제를 `examples/`에 두었습니다. 모든 REST TR은 `LSOpenAPI.call()`로 호출할 수 있으며, 여러 입력 블록이 필요한 TR은 공식 필드명으로 전체 블록 구조를 `body=`에 전달합니다. 연속조회는 `iter_pages()`를 사용할 수 있습니다. TR 목록은 `ls_openapi/catalog.py`에서 확인합니다.
+``t2111` 현재가와 `t8464` 차트 조회, `FC9` 실시간 구독 예제를 `examples/`에 두었습니다. TR을 직접 다루는 저수준 API와, 자주 쓰는 기능을 이름으로 호출하는 도메인 SDK를 함께 제공합니다.
 
-주문·정정·취소 TR은 기본 차단됩니다. 실제 주문 기능을 사용해야 할 때만 `LSOpenAPI(allow_orders=True)`를 명시하세요. 예제는 조회용이며 API 호출에는 발급받은 키와 계좌 권한이 필요합니다.
+### 도메인 SDK
+
+```python
+import os
+from ls_openapi import LSClient
+
+client = LSClient()
+quote = client.market.quote(os.environ["LS_FUTURES_CODE"])
+print(quote["t2111OutBlock"])
+
+balance = client.account.balance()
+```
+
+`client.market`은 현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 각 메서드는 아직 LS 원본 응답 딕셔너리를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
+
+### 전체 TR 직접 호출
+
+편의 메서드가 없는 TR도 기존 `LSOpenAPI.call()`로 호출할 수 있습니다. 여러 입력 블록이 필요한 TR은 공식 필드명으로 전체 블록 구조를 `body=`에 전달합니다. 연속조회는 `iter_pages()`를 사용합니다. 전체 TR 목록은 `ls_openapi/catalog.py`에 있습니다.
+
+주문·정정·취소는 기본 차단됩니다. 메서드가 필요한 경우에만 `LSClient(allow_orders=True)`를 명시하세요. 이 설정은 실계좌 주문도 가능하게 합니다. API 호출에는 발급받은 키와 계좌 권한이 필요합니다.
 
 ## 공식 자료 갱신
 
