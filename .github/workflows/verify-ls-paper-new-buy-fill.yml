@@ -1,0 +1,37 @@
+name: Verify LS simulated A016C000 new buy fill
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_paper_order:
+        description: "Type I_ACKNOWLEDGE_PAPER_SIMULATED_TRADING to buy one A016C000 contract; a filled long position will remain open"
+        type: string
+        required: true
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ls-paper-a016c000-new-buy-fill
+  cancel-in-progress: false
+
+jobs:
+  paper-new-buy-fill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Python package
+        run: python -m pip install -e .
+      - name: Verify one-contract simulated buy fill and events
+        env:
+          LS_APP_KEY: ${{ secrets.LS_APP_KEY }}
+          LS_APP_SECRET: ${{ secrets.LS_APP_SECRET }}
+          LS_ORDER_CONFIRM: ${{ inputs.confirm_paper_order }}
+          LS_ORDER_TARGET_CODE: "A016C000"
+          PYTHONUNBUFFERED: "1"
+        run: python scripts/verify_paper_new_buy_events.py
