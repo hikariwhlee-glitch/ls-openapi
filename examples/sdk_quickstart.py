@@ -1,9 +1,9 @@
 """Quickstart using the domain-oriented SDK facade."""
 import os
 
-from ls_openapi import LSClient
+from ls_openapi import LSFutureClient
 
-client = LSClient()
+client = LSFutureClient()
 code = os.environ["LS_FUTURES_CODE"]
 
 quote = client.market.quote(code)
