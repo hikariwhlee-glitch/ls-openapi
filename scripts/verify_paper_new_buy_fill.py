@@ -178,7 +178,7 @@ def main() -> int:
         if filled < 1 and remaining > 0:
             client.call(
                 "CFOAT00300",
-                {"FnoIsuNo": api_code, "OrgOrdNo": order_no, "CancQty": remaining},
+                {"FnoIsuNo": api_code, "OrgOrdNo": order_no, "CancQty": str(int(remaining))},
             )
             state = wait_order(client, short_code, order_no)
             if state is None or number(state, "ordrem") > 0:
