@@ -183,7 +183,7 @@ class Orders:
         )
 
 
-class LSClient(LSOpenAPI):
+class LSFutureClient(LSOpenAPI):
     """Convenient domestic futures/options SDK entry point.
 
     The raw call and iter_pages methods remain available for the full TR catalog.
@@ -201,4 +201,4 @@ class LSClient(LSOpenAPI):
         return LSWebSocket(self, simulated=simulated)
 
 
-__all__ = ["LSClient", "MarketData", "Account", "Orders", "LSAPIError"]
+__all__ = ["LSFutureClient", "MarketData", "Account", "Orders", "LSAPIError"]
