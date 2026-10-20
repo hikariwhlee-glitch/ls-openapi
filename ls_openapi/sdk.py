@@ -106,7 +106,7 @@ class Orders:
 
     @staticmethod
     def _positive_quantity(quantity: int) -> None:
-        if isinstance(quantity, bool) or quantity < 1:
+        if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity < 1:
             raise ValueError("quantity must be a positive integer")
 
     def new(
@@ -116,7 +116,6 @@ class Orders:
         side: Literal["buy", "sell"],
         quantity: int,
         price: float,
-        price_type: str = "00",
     ) -> dict[str, Any]:
         """Submit a limit order (CFOAT00100); returns the raw LS response."""
         if not instrument_code.strip():
@@ -131,7 +130,7 @@ class Orders:
             {
                 "FnoIsuNo": instrument_code,
                 "BnsTpCode": "2" if side == "buy" else "1",
-                "FnoOrdprcPtnCode": price_type,
+                "FnoOrdprcPtnCode": "00",
                 "FnoOrdPrc": price,
                 "OrdQty": quantity,
             },
