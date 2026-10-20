@@ -216,9 +216,10 @@ def main() -> int:
         amend_quote = client.call("t2112", {"shcode": short_code}).get("t2112OutBlock", {})
         if not isinstance(amend_quote, dict):
             raise RuntimeError("정정 직전 현재 호가 응답 구조가 올바르지 않습니다.")
-        amend_price = number(amend_quote, "bidho1")
-        if amend_price <= 0:
-            raise RuntimeError("정정 직전 매수1호가를 확인하지 못해 주문 정정을 중단합니다.")
+        amend_bid = number(amend_quote, "bidho1")
+        amend_price = round(amend_bid - tick * 5, 8)
+        if amend_bid <= 0 or amend_price <= 0:
+            raise RuntimeError("정정 직전 매수1호가 또는 5틱 아래 가격을 확인하지 못해 주문 정정을 중단합니다.")
         amended = client.call(
             "CFOAT00200",
             {"FnoIsuNo": api_code, "OrgOrdNo": second_no, "FnoOrdprcPtnCode": "00",
@@ -226,7 +227,7 @@ def main() -> int:
         )
         amended_no = order_number(amended, "CFOAT00200")
         print(
-            f"현재 매수1호가 {amend_price:g}로 지정가 정정 접수: "
+            f"현재 매수1호가 {amend_bid:g}보다 5틱 낮은 {amend_price:g}로 지정가 정정 접수: "
             f"원주문 끝자리 {second_no % 10000:04d}, 정정주문 끝자리 {amended_no % 10000:04d}"
         )
 
