@@ -3,7 +3,7 @@
 현재 SDK는 기존 REST/WebSocket 구현 위에 도메인별 진입점을 제공하는 얇은 파사드입니다. 기본값으로 조회 전용이며 응답은 LS 원본 딕셔너리를 그대로 반환합니다.
 
 ```text
-LSClient
+LSFutureClient
 ├── market      quote, orderbook, tick_chart
 ├── account     balance, orders
 ├── orders      new, amend, cancel (allow_orders=True 필요)
@@ -16,9 +16,9 @@ LSClient
 
 ```python
 import os
-from ls_openapi import LSClient
+from ls_openapi import LSFutureClient
 
-client = LSClient()
+client = LSFutureClient()
 quote = client.market.quote(os.environ["LS_FUTURES_CODE"])
 print(quote["t2111OutBlock"])
 ```
@@ -44,7 +44,7 @@ result = client.call("t2112", {"shcode": os.environ["LS_FUTURES_CODE"]})
 주문 메서드는 의도적으로 기본 차단됩니다. 모의투자 또는 실계좌 주문을 호출하려는 사용자가 생성 시 권한을 분명히 켜야 합니다.
 
 ```python
-client = LSClient(allow_orders=True)
+client = LSFutureClient(allow_orders=True)
 response = client.orders.new(
     instrument_code="주문용 종목코드",
     side="buy",
