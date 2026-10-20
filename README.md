@@ -33,9 +33,9 @@ python examples/futures_quote.py
 
 ```python
 import os
-from ls_openapi import LSClient
+from ls_openapi import LSFutureClient
 
-client = LSClient()
+client = LSFutureClient()
 quote = client.market.quote(os.environ["LS_FUTURES_CODE"])
 print(quote["t2111OutBlock"])
 
@@ -48,7 +48,7 @@ balance = client.account.balance()
 
 편의 메서드가 없는 TR도 기존 `LSOpenAPI.call()`로 호출할 수 있습니다. 여러 입력 블록이 필요한 TR은 공식 필드명으로 전체 블록 구조를 `body=`에 전달합니다. 연속조회는 `iter_pages()`를 사용합니다. 전체 TR 목록은 `ls_openapi/catalog.py`에 있습니다.
 
-주문·정정·취소는 기본 차단됩니다. 메서드가 필요한 경우에만 `LSClient(allow_orders=True)`를 명시하세요. 이 설정은 실계좌 주문도 가능하게 합니다. API 호출에는 발급받은 키와 계좌 권한이 필요합니다.
+주문·정정·취소는 기본 차단됩니다. 메서드가 필요한 경우에만 `LSFutureClient(allow_orders=True)`를 명시하세요. 이 설정은 실계좌 주문도 가능하게 합니다. API 호출에는 발급받은 키와 계좌 권한이 필요합니다.
 
 ## 공식 자료 갱신
 
