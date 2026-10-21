@@ -4,7 +4,7 @@
 
 ```text
 LSFutureClient
-├── market      quote, orderbook, tick_chart
+├── market      search_instruments, quote, orderbook, tick_chart
 ├── account     balance, orders
 ├── orders      new, amend, cancel (allow_orders=True 필요)
 ├── websocket() 실시간 연결 객체 생성
