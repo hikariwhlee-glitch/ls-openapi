@@ -33,11 +33,20 @@ result = client.call("t2112", {"shcode": os.environ["LS_FUTURES_CODE"]})
 
 | 영역 | 메서드 | TR | 결과 |
 |---|---|---|---|
+| 종목 | `client.market.search_instruments(query, instrument_type="futures", limit=20)` | t9943 / t9944 | 이름·단축코드·확장코드 후보 |
 | 시세 | `client.market.quote(code)` | t2111 | LS 원본 응답 딕셔너리 |
 | 시세 | `client.market.orderbook(code)` | t2112 | LS 원본 응답 딕셔너리 |
 | 시세 | `client.market.tick_chart(code, ...)` | t8464 | LS 원본 응답 딕셔너리 |
 | 계좌 | `client.account.balance()` | t0441 | LS 원본 응답 딕셔너리 |
 | 계좌 | `client.account.orders(...)` | t0434 | LS 원본 응답 딕셔너리 |
+
+종목 검색은 지수선물 마스터(`t9943`)와 지수옵션 마스터(`t9944`)에서 이름 또는 코드를 검색합니다. 같은 상품에도 만기·행사가별 계약이 여러 개일 수 있으므로 후보 목록을 반환하며, 자동으로 하나를 선택하지 않습니다.
+
+```python
+candidates = client.market.search_instruments("코스피200 선물")
+for item in candidates["results"]:
+    print(item["name"], item["code"], item["extended_code"])
+```
 
 ## 주문 권한
 
