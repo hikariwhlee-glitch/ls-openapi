@@ -16,7 +16,7 @@ from .websocket import LSWebSocket
 
 def _normalize_instrument_text(value: str) -> str:
     """Normalize Korean/English symbol names and remove generic product words."""
-    normalized = re.sub(r"[\\W_]+", "", value.casefold())
+    normalized = re.sub(r"[\W_]+", "", value.casefold())
     normalized = normalized.replace("kospi200", "코스피200").replace("kosdaq150", "코스닥150")
     for word in ("futures", "future", "options", "option", "선물", "옵션"):
         normalized = normalized.replace(word, "")
