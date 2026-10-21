@@ -28,16 +28,24 @@ def _client() -> LSFutureClient:
 def search_derivative_instruments(
     query: str,
     instrument_type: Literal["futures", "options"] = "futures",
+    asset_class: Literal["all", "index", "stock", "commodity"] = "all",
     limit: int = 20,
 ) -> dict[str, Any]:
-    """Search index futures/options by a Korean or English name, or by symbol code.
+    """Find LS domestic derivatives from a natural-language request.
 
-    Returns matching contract candidates with their short and extended codes.
-    Multiple expiries/strikes may match; the caller should let the user choose.
+    Pass the user's product terms and keep meaningful constraints in query
+    (for example "코스피200 미니 선물 최근월", "삼성전자 주식선물",
+    "금 상품선물", or "코스피200 위클리 400 콜옵션"). Set instrument_type
+    from the request and asset_class to index, stock, commodity or all.
+    Futures cover index, single-stock and commodity masters; options currently
+    cover index options, including mini and weekly contracts. The LS master data
+    does not expose a reliable common expiry/strike schema, so return candidates
+    and never silently choose a contract when several match.
     """
     return _client().market.search_instruments(
         query,
         instrument_type=instrument_type,
+        asset_class=asset_class,
         limit=limit,
     )
 
