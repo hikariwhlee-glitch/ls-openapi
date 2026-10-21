@@ -42,7 +42,27 @@ print(quote["t2111OutBlock"])
 balance = client.account.balance()
 ```
 
-`client.market`은 종목 검색·현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 종목은 `client.market.search_instruments("코스피200 선물")`처럼 이름으로 검색할 수 있고, 만기별 후보와 코드를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
+`client.market`은 국내 파생상품 검색·현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 종목은 자연어로 검색할 수 있습니다.
+
+```python
+# 지수, 개별주식, 상품 선물 마스터를 검색하고 조건에 맞는 계약 후보를 반환합니다.
+result = client.market.search_instruments(
+    "삼성전자 주식선물 찾아줘",
+    instrument_type="futures",
+    asset_class="stock",
+)
+for item in result["results"]:
+    print(item["name"], item["code"], item["asset_class"])
+
+# 미니/위클리 등 조건이 있으면 후보 검색에 반영됩니다.
+result = client.market.search_instruments(
+    "코스피200 위클리 400 콜옵션",
+    instrument_type="options",
+    asset_class="index",
+)
+```
+
+선물은 지수·개별주식·상품 마스터를 지원하며, 옵션은 LS의 지수옵션 마스터(정규·미니·위클리)를 지원합니다. 여러 만기나 행사가가 남으면 한 계약을 임의로 고르지 않고 후보를 반환합니다. MCP 도구 설명은 AI가 자연어 요청에서 상품 종류와 분류를 인식해 이 검색 인자에 넣도록 안내합니다. 전체 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
 
 ### 전체 TR 직접 호출
 
