@@ -42,7 +42,7 @@ print(quote["t2111OutBlock"])
 balance = client.account.balance()
 ```
 
-`client.market`은 현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 각 메서드는 LS 원본 응답 딕셔너리를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
+`client.market`은 종목 검색·현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 종목은 `client.market.search_instruments("코스피200 선물")`처럼 이름으로 검색할 수 있고, 만기별 후보와 코드를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
 
 ### 전체 TR 직접 호출
 
@@ -56,7 +56,7 @@ Windows에서는 저장소를 받은 뒤 `setup-codex-mcp.cmd`를 더블클릭�
 
 - [Codex 로컬 MCP 쉬운 설치 안내](docs/mcp-codex.md)
 
-MCP는 현재가·호가·잔고·차트 조회 도구를 제공하며 주문 기능은 노출하지 않습니다. Codex가 사용자 PC에서 로컬로 실행하므로 별도 클라우드 서버가 필요하지 않습니다.
+MCP는 종목 검색·현재가·호가·잔고·차트 조회 도구를 제공하며 주문 기능은 노출하지 않습니다. Codex가 사용자 PC에서 로컬로 실행하므로 별도 클라우드 서버가 필요하지 않습니다.
 
 ## 공식 자료 갱신
 
