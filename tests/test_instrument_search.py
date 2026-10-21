@@ -29,7 +29,7 @@ class InstrumentSearchTests(unittest.TestCase):
     def test_natural_korean_query_matches_standard_and_mini_kospi200_futures(self):
         client = FakeClient(
             {
-                ("t9943", (("gubun", ""),)): {
+                ("t9943", (("gubun", "1"),)): {
                     "t9943OutBlock": [
                         {"hname": "KOSPI200 202612", "shcode": "A016C000", "expcode": "KR4101VC6000"}
                     ]
@@ -53,13 +53,13 @@ class InstrumentSearchTests(unittest.TestCase):
             ["A016C000", "A196C000"],
         )
         self.assertEqual(result["results"][0]["extended_code"], "KR4101VC6000")
-        self.assertIn(("t9943", {"gubun": ""}), client.calls)
+        self.assertIn(("t9943", {"gubun": "1"}), client.calls)
         self.assertIn(("t8435", {"gubun": "MF"}), client.calls)
 
     def test_mini_qualifier_filters_out_standard_futures(self):
         client = FakeClient(
             {
-                ("t9943", (("gubun", ""),)): {
+                ("t9943", (("gubun", "1"),)): {
                     "t9943OutBlock": [
                         {"hname": "KOSPI200 202612", "shcode": "A016C000", "expcode": ""}
                     ]
@@ -208,7 +208,7 @@ class InstrumentSearchTests(unittest.TestCase):
     def test_unexpected_master_response_shape_is_an_error(self):
         client = FakeClient(
             {
-                ("t9943", (("gubun", ""),)): {
+                ("t9943", (("gubun", "1"),)): {
                     "t9943OutBlock": {"hname": "KOSPI200"}
                 }
             }
