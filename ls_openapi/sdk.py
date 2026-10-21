@@ -1,15 +1,26 @@
 """Domain-oriented convenience facade over the raw LS TR client.
 
-The facade intentionally returns LS response dictionaries unchanged. Use
-LSOpenAPI.call for any TR that does not yet have a convenience method.
+Most helpers return LS response dictionaries unchanged; instrument search returns
+a compact list of matching name/code candidates. Use LSOpenAPI.call for any TR
+that does not yet have a convenience method.
 """
 from __future__ import annotations
 
 from datetime import date
+import re
 from typing import Any, Literal
 
 from .client import LSAPIError, LSOpenAPI
 from .websocket import LSWebSocket
+
+
+def _normalize_instrument_text(value: str) -> str:
+    """Normalize Korean/English symbol names and remove generic product words."""
+    normalized = re.sub(r"[\\W_]+", "", value.casefold())
+    normalized = normalized.replace("kospi200", "코스피200").replace("kosdaq150", "코스닥150")
+    for word in ("futures", "future", "options", "option", "선물", "옵션"):
+        normalized = normalized.replace(word, "")
+    return normalized
 
 
 class MarketData:
@@ -17,6 +28,65 @@ class MarketData:
 
     def __init__(self, client: LSOpenAPI):
         self._client = client
+
+    def search_instruments(
+        self,
+        query: str,
+        *,
+        instrument_type: Literal["futures", "options"] = "futures",
+        limit: int = 20,
+    ) -> dict[str, Any]:
+        """Search index futures/options master lists by name or symbol code.
+
+        Futures use t9943; options use t9944. Multiple contracts are returned
+        as candidates so the caller can choose the intended expiry/strike.
+        """
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError("query must be a non-empty instrument name or code")
+        if instrument_type not in {"futures", "options"}:
+            raise ValueError("instrument_type must be 'futures' or 'options'")
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise ValueError("limit must be an integer from 1 to 100")
+
+        if instrument_type == "futures":
+            tr_code, output_block, params = "t9943", "t9943OutBlock", {"gubun": "V"}
+        else:
+            tr_code, output_block, params = "t9944", "t9944OutBlock", {"dummy": ""}
+
+        normalized_query = _normalize_instrument_text(query)
+        if not normalized_query:
+            raise ValueError("query must include an instrument name or symbol code")
+
+        response = self._client.call(tr_code, params)
+        rows = response.get(output_block, [])
+        if not isinstance(rows, list):
+            raise RuntimeError(f"{tr_code} response did not contain an array in {output_block}")
+
+        matches = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            name = str(row.get("hname", "")).strip()
+            code = str(row.get("shcode", "")).strip()
+            extended_code = str(row.get("expcode", "")).strip()
+            searchable = _normalize_instrument_text(f"{name} {code} {extended_code}")
+            if normalized_query in searchable:
+                matches.append(
+                    {
+                        "name": name,
+                        "code": code,
+                        "extended_code": extended_code,
+                    }
+                )
+
+        return {
+            "query": query,
+            "instrument_type": instrument_type,
+            "master_tr": tr_code,
+            "match_count": len(matches),
+            "returned_count": min(len(matches), limit),
+            "results": matches[:limit],
+        }
 
     def quote(self, code: str) -> dict[str, Any]:
         """Get the current quote (t2111) for a futures/options code."""
