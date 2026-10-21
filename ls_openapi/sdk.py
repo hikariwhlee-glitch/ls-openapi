@@ -19,6 +19,12 @@ def _instrument_tokens(value: str) -> list[str]:
     text = value.casefold()
     text = re.sub(r"kospi\\s*[-_]?\\s*200|코스피\\s*[-_]?\\s*200", " 코스피200 ", text)
     text = re.sub(r"kosdaq\\s*[-_]?\\s*150|코스닥\\s*[-_]?\\s*150", " 코스닥150 ", text)
+    text = re.sub(r"코스피200\\s*위클리\\s*옵션|코스닥150\\s*위클리\\s*옵션|미니\\s*(선물|옵션)|지수\\s*(선물|옵션)|주식\\s*선물|상품\\s*선물|콜\\s*옵션|풋\\s*옵션", lambda m: re.sub(r"\\s+", " ", m.group(0)), text)
+    text = re.sub(r"코스피200위클리옵션", "코스피200 위클리 옵션", text)
+    text = re.sub(r"코스닥150위클리옵션", "코스닥150 위클리 옵션", text)
+    text = re.sub(r"미니(선물|옵션)", r"미니 \\1", text)
+    text = re.sub(r"(지수|주식|상품)(선물|옵션)", r"\\1 \\2", text)
+    text = re.sub(r"(콜|풋)옵션", r"\\1 옵션", text)
     text = re.sub(r"찾아\\s*줘|찾아\\s*주세요|검색(?:해)?\\s*줘|검색(?:해)?\\s*주세요|조회(?:해)?\\s*줘|조회(?:해)?\\s*주세요|알려\\s*줘|알려\\s*주세요|보여\\s*줘|보여\\s*주세요", " ", text)
     text = re.sub(r"\\b(?:please|find|search|lookup|look|up|show|tell|me|the|contract|instrument)\\b", " ", text)
     text = re.sub(r"[^0-9a-z가-힣]+", " ", text)
@@ -74,32 +80,32 @@ class MarketData:
             raise ValueError("limit must be an integer from 1 to 100")
 
         query_tokens = _instrument_tokens(query)
-        if not query_tokens:
-            raise ValueError("query must include a product name, category, expiry/variant or symbol code")
+        if not query_tokens and not re.search(r"선물|future|옵션|option|파생", query, re.IGNORECASE):
+            raise ValueError("query must include a product name, category or symbol code")
 
         plans: list[tuple[str, dict[str, str], str, str, str]] = []
         if instrument_type == "futures":
             if asset_class in {"all", "index"}:
                 plans.extend([
                     ("t9943", {"gubun": ""}, "t9943OutBlock", "index", "지수선물"),
-                    ("t9943", {"gubun": "V"}, "t9943OutBlock", "index", "변동성지수선물"),
-                    ("t9943", {"gubun": "S"}, "t9943OutBlock", "index", "섹터지수선물"),
-                    ("t8467", {"gubun": "Q"}, "t8467OutBlock", "index", "코스닥150지수선물"),
-                    ("t8435", {"gubun": "MF"}, "t8435OutBlock", "index", "미니선물"),
-                    ("t8435", {"gubun": "SF"}, "t8435OutBlock", "index", "코스닥150선물"),
+                    ("t9943", {"gubun": "V"}, "t9943OutBlock", "index", "변동성 지수 선물"),
+                    ("t9943", {"gubun": "S"}, "t9943OutBlock", "index", "섹터 지수 선물"),
+                    ("t8467", {"gubun": "Q"}, "t8467OutBlock", "index", "코스닥150 지수 선물"),
+                    ("t8435", {"gubun": "MF"}, "t8435OutBlock", "index", "미니 선물"),
+                    ("t8435", {"gubun": "SF"}, "t8435OutBlock", "index", "코스닥150 선물"),
                 ])
             if asset_class in {"all", "stock"}:
-                plans.append(("t8401", {}, "t8401OutBlock", "stock", "주식선물"))
+                plans.append(("t8401", {}, "t8401OutBlock", "stock", "주식 선물"))
             if asset_class in {"all", "commodity"}:
-                plans.append(("t8426", {"dummy": ""}, "t8426OutBlock", "commodity", "상품선물"))
+                plans.append(("t8426", {"dummy": ""}, "t8426OutBlock", "commodity", "상품 선물"))
         else:
             if asset_class in {"all", "index"}:
                 plans.extend([
-                    ("t9944", {"dummy": ""}, "t9944OutBlock", "index", "지수옵션"),
+                    ("t9944", {"dummy": ""}, "t9944OutBlock", "index", "지수 옵션"),
                     ("t8433", {"dummy": ""}, "t8433OutBlock", "index", "지수옵션"),
-                    ("t8435", {"gubun": "MO"}, "t8435OutBlock", "index", "미니옵션"),
-                    ("t8435", {"gubun": "WK"}, "t8435OutBlock", "index", "코스피200위클리옵션"),
-                    ("t8435", {"gubun": "QW"}, "t8435OutBlock", "index", "코스닥150위클리옵션"),
+                    ("t8435", {"gubun": "MO"}, "t8435OutBlock", "index", "미니 옵션"),
+                    ("t8435", {"gubun": "WK"}, "t8435OutBlock", "index", "코스피200 위클리 옵션"),
+                    ("t8435", {"gubun": "QW"}, "t8435OutBlock", "index", "코스닥150 위클리 옵션"),
                 ])
 
         matches: list[dict[str, Any]] = []
