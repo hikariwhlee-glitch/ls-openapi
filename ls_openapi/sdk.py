@@ -14,13 +14,34 @@ from .client import LSAPIError, LSOpenAPI
 from .websocket import LSWebSocket
 
 
-def _normalize_instrument_text(value: str) -> str:
-    """Normalize Korean/English symbol names and remove generic product words."""
-    normalized = re.sub(r"[\W_]+", "", value.casefold())
-    normalized = normalized.replace("kospi200", "코스피200").replace("kosdaq150", "코스닥150")
-    for word in ("futures", "future", "options", "option", "선물", "옵션"):
-        normalized = normalized.replace(word, "")
-    return normalized
+def _instrument_tokens(value: str) -> list[str]:
+    """Normalize a natural-language instrument query or master name into tokens."""
+    text = value.casefold()
+    text = re.sub(r"kospi\\s*[-_]?\\s*200|코스피\\s*[-_]?\\s*200", " 코스피200 ", text)
+    text = re.sub(r"kosdaq\\s*[-_]?\\s*150|코스닥\\s*[-_]?\\s*150", " 코스닥150 ", text)
+    text = re.sub(r"찾아\\s*줘|찾아\\s*주세요|검색(?:해)?\\s*줘|검색(?:해)?\\s*주세요|조회(?:해)?\\s*줘|조회(?:해)?\\s*주세요|알려\\s*줘|알려\\s*주세요|보여\\s*줘|보여\\s*주세요", " ", text)
+    text = re.sub(r"\\b(?:please|find|search|lookup|look|up|show|tell|me|the|contract|instrument)\\b", " ", text)
+    text = re.sub(r"[^0-9a-z가-힣]+", " ", text)
+    ignored = {
+        "선물", "선물형", "future", "futures", "옵션", "option", "options",
+        "종목", "코드", "상품코드", "검색", "조회", "알려", "찾아", "주세요",
+        "줘", "해줘", "부탁", "부탁해", "관련", "거래", "가능한",
+    }
+    aliases = {
+        "콜": "c", "콜옵션": "c", "call": "c",
+        "풋": "p", "풋옵션": "p", "put": "p",
+        "mini": "미니", "weekly": "위클리",
+        "kospi200": "코스피200", "kosdaq150": "코스닥150",
+        "index": "지수", "stock": "주식", "commodity": "상품",
+    }
+    tokens: list[str] = []
+    for token in text.split():
+        if token in ignored:
+            continue
+        token = aliases.get(token, token)
+        if token and token not in tokens:
+            tokens.append(token)
+    return tokens
 
 
 class MarketData:
@@ -34,57 +55,106 @@ class MarketData:
         query: str,
         *,
         instrument_type: Literal["futures", "options"] = "futures",
+        asset_class: Literal["all", "index", "stock", "commodity"] = "all",
         limit: int = 20,
     ) -> dict[str, Any]:
-        """Search index futures/options master lists by name or symbol code.
+        """Search LS derivative masters by natural-language name, category or code.
 
-        Futures use t9943; options use t9944. Multiple contracts are returned
-        as candidates so the caller can choose the intended expiry/strike.
+        Product families are loaded from LS's index, stock and commodity masters.
+        Results are candidates: expiry, strike and contract variant are never
+        guessed or silently selected.
         """
         if not isinstance(query, str) or not query.strip():
             raise ValueError("query must be a non-empty instrument name or code")
         if instrument_type not in {"futures", "options"}:
             raise ValueError("instrument_type must be 'futures' or 'options'")
+        if asset_class not in {"all", "index", "stock", "commodity"}:
+            raise ValueError("asset_class must be 'all', 'index', 'stock', or 'commodity'")
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
             raise ValueError("limit must be an integer from 1 to 100")
 
+        query_tokens = _instrument_tokens(query)
+        if not query_tokens:
+            raise ValueError("query must include a product name, category, expiry/variant or symbol code")
+
+        plans: list[tuple[str, dict[str, str], str, str, str]] = []
         if instrument_type == "futures":
-            tr_code, output_block, params = "t9943", "t9943OutBlock", {"gubun": "V"}
+            if asset_class in {"all", "index"}:
+                plans.extend([
+                    ("t9943", {"gubun": ""}, "t9943OutBlock", "index", "지수선물"),
+                    ("t9943", {"gubun": "V"}, "t9943OutBlock", "index", "변동성지수선물"),
+                    ("t9943", {"gubun": "S"}, "t9943OutBlock", "index", "섹터지수선물"),
+                    ("t8467", {"gubun": "Q"}, "t8467OutBlock", "index", "코스닥150지수선물"),
+                    ("t8435", {"gubun": "MF"}, "t8435OutBlock", "index", "미니선물"),
+                    ("t8435", {"gubun": "SF"}, "t8435OutBlock", "index", "코스닥150선물"),
+                ])
+            if asset_class in {"all", "stock"}:
+                plans.append(("t8401", {}, "t8401OutBlock", "stock", "주식선물"))
+            if asset_class in {"all", "commodity"}:
+                plans.append(("t8426", {"dummy": ""}, "t8426OutBlock", "commodity", "상품선물"))
         else:
-            tr_code, output_block, params = "t9944", "t9944OutBlock", {"dummy": ""}
+            if asset_class in {"all", "index"}:
+                plans.extend([
+                    ("t9944", {"dummy": ""}, "t9944OutBlock", "index", "지수옵션"),
+                    ("t8433", {"dummy": ""}, "t8433OutBlock", "index", "지수옵션"),
+                    ("t8435", {"gubun": "MO"}, "t8435OutBlock", "index", "미니옵션"),
+                    ("t8435", {"gubun": "WK"}, "t8435OutBlock", "index", "코스피200위클리옵션"),
+                    ("t8435", {"gubun": "QW"}, "t8435OutBlock", "index", "코스닥150위클리옵션"),
+                ])
 
-        normalized_query = _normalize_instrument_text(query)
-        if not normalized_query:
-            raise ValueError("query must include an instrument name or symbol code")
-
-        response = self._client.call(tr_code, params)
-        rows = response.get(output_block, [])
-        if not isinstance(rows, list):
-            raise RuntimeError(f"{tr_code} response did not contain an array in {output_block}")
-
-        matches = []
-        for row in rows:
-            if not isinstance(row, dict):
-                continue
-            name = str(row.get("hname", "")).strip()
-            code = str(row.get("shcode", "")).strip()
-            extended_code = str(row.get("expcode", "")).strip()
-            searchable = _normalize_instrument_text(f"{name} {code} {extended_code}")
-            if normalized_query in searchable:
-                matches.append(
-                    {
+        matches: list[dict[str, Any]] = []
+        seen_codes: set[str] = set()
+        called_trs: list[str] = []
+        for tr_code, params, output_block, family, product_family in plans:
+            if tr_code not in called_trs:
+                called_trs.append(tr_code)
+            response = self._client.call(tr_code, params)
+            rows = response.get(output_block, [])
+            if not isinstance(rows, list):
+                raise RuntimeError(f"{tr_code} response did not contain an array in {output_block}")
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                name = str(row.get("hname", "")).strip()
+                code = str(row.get("shcode", "")).strip()
+                extended_code = str(row.get("expcode", "")).strip()
+                identity = code or extended_code
+                if identity and identity in seen_codes:
+                    continue
+                family_words = {
+                    "index": "지수 index",
+                    "stock": "주식 개별주식 stock",
+                    "commodity": "상품 원자재 commodity",
+                }[family]
+                searchable = _instrument_tokens(
+                    f"{name} {code} {extended_code} {family_words} {product_family}"
+                )
+                if all(token in searchable for token in query_tokens):
+                    if identity:
+                        seen_codes.add(identity)
+                    matches.append({
                         "name": name,
                         "code": code,
                         "extended_code": extended_code,
-                    }
-                )
+                        "asset_class": family,
+                        "instrument_type": instrument_type,
+                        "product_family": product_family,
+                        "master_tr": tr_code,
+                    })
 
         return {
             "query": query,
             "instrument_type": instrument_type,
-            "master_tr": tr_code,
+            "asset_class": asset_class,
+            "master_tr": called_trs[0] if len(called_trs) == 1 else None,
+            "master_trs": called_trs,
             "match_count": len(matches),
             "returned_count": min(len(matches), limit),
+            "unsupported": (
+                ["stock options", "commodity options"]
+                if instrument_type == "options" and asset_class in {"all", "stock", "commodity"}
+                else []
+            ),
             "results": matches[:limit],
         }
 
