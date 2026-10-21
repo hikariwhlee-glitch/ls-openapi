@@ -61,7 +61,7 @@ class MarketData:
         self,
         query: str,
         *,
-        instrument_type: Literal["futures", "options"] = "futures",
+        instrument_type: Literal["auto", "futures", "options"] = "auto",
         asset_class: Literal["all", "index", "stock", "commodity"] = "all",
         limit: int = 20,
     ) -> dict[str, Any]:
@@ -73,8 +73,14 @@ class MarketData:
         """
         if not isinstance(query, str) or not query.strip():
             raise ValueError("query must be a non-empty instrument name or code")
-        if instrument_type not in {"futures", "options"}:
-            raise ValueError("instrument_type must be 'futures' or 'options'")
+        if instrument_type not in {"auto", "futures", "options"}:
+            raise ValueError("instrument_type must be 'auto', 'futures' or 'options'")
+        if instrument_type == "auto":
+            has_futures = bool(re.search(r"선물|future", query, re.IGNORECASE))
+            has_options = bool(re.search(r"옵션|option", query, re.IGNORECASE))
+            if has_futures and has_options:
+                raise ValueError("query mentions both futures and options; specify instrument_type")
+            instrument_type = "options" if has_options else "futures"
         if asset_class not in {"all", "index", "stock", "commodity"}:
             raise ValueError("asset_class must be 'all', 'index', 'stock', or 'commodity'")
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
@@ -91,7 +97,7 @@ class MarketData:
         if instrument_type == "futures":
             if asset_class in {"all", "index"}:
                 plans.extend([
-                    ("t9943", {"gubun": ""}, "t9943OutBlock", "index", "지수선물"),
+                    ("t9943", {"gubun": "1"}, "t9943OutBlock", "index", "지수선물"),
                     ("t9943", {"gubun": "V"}, "t9943OutBlock", "index", "변동성 지수 선물"),
                     ("t9943", {"gubun": "S"}, "t9943OutBlock", "index", "섹터 지수 선물"),
                     ("t8467", {"gubun": "Q"}, "t8467OutBlock", "index", "코스닥150 지수 선물"),
