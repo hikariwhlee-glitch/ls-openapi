@@ -1,0 +1,29 @@
+name: Verify local MCP server
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ls_openapi/**"
+      - "scripts/smoke_test_mcp.py"
+      - "pyproject.toml"
+      - ".github/workflows/verify-local-mcp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mcp-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install package with MCP dependencies
+        run: python -m pip install -e ".[mcp]"
+      - name: Initialize MCP server and list tools
+        run: python scripts/smoke_test_mcp.py
