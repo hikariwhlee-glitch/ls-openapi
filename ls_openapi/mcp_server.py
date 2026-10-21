@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 from functools import lru_cache
+import os
 from typing import Any
 
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ from mcp.server.fastmcp import FastMCP
 from .sdk import LSFutureClient
 
 # Load a project-local .env for desktop clients that only pass a working directory.
-load_dotenv()
+load_dotenv(os.environ.get("LS_OPENAPI_ENV_FILE") or None)
 
 server = FastMCP("ls-openapi")
 
