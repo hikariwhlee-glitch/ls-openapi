@@ -27,7 +27,7 @@ def _client() -> LSFutureClient:
 @server.tool()
 def search_derivative_instruments(
     query: str,
-    instrument_type: Literal["futures", "options"] = "futures",
+    instrument_type: Literal["auto", "futures", "options"] = "auto",
     asset_class: Literal["all", "index", "stock", "commodity"] = "all",
     limit: int = 20,
 ) -> dict[str, Any]:
@@ -35,8 +35,7 @@ def search_derivative_instruments(
 
     Pass the user's product terms and keep meaningful constraints in query
     (for example "코스피200 미니 선물 최근월", "삼성전자 주식선물",
-    "금 상품선물", or "코스피200 위클리 400 콜옵션"). Set instrument_type
-    from the request and asset_class to index, stock, commodity or all.
+    "금 상품선물", or "코스피200 위클리 400 콜옵션"). Set instrument_type to auto unless the user specifies futures/options; set asset_class from the request to index, stock, commodity or all.
     Futures cover index, single-stock and commodity masters; options currently
     cover index options, including mini and weekly contracts. The LS master data
     does not expose a reliable common expiry/strike schema, so return candidates
