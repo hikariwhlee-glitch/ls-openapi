@@ -52,11 +52,11 @@ balance = client.account.balance()
 
 ## Codex 로컬 MCP
 
-Codex가 로컬에서 현재가·호가·잔고·차트 조회를 도구로 호출하는 MCP 서버도 제공합니다. 서버는 Codex가 사용자 PC에서 실행하며, 클라우드 서비스나 주문 도구를 포함하지 않습니다.
+Windows에서는 저장소를 받은 뒤 `setup-codex-mcp.cmd`를 더블클릭하면 Python 가상환경과 MCP 서버를 설치하고 Codex에 등록합니다. 설치 중 LS 앱키와 시크릿을 입력하면 로컬 `.env`에 저장됩니다.
 
-- [Codex 로컬 MCP 설치 및 설정](docs/mcp-codex.md)
+- [Codex 로컬 MCP 쉬운 설치 안내](docs/mcp-codex.md)
 
-MCP 기능은 선택 의존성이므로 기존 SDK 설치에는 영향을 주지 않습니다. MCP를 설치할 때는 `pip install -e ".[mcp]"`를 사용합니다.
+MCP는 현재가·호가·잔고·차트 조회 도구를 제공하며 주문 기능은 노출하지 않습니다. Codex가 사용자 PC에서 로컬로 실행하므로 별도 클라우드 서버가 필요하지 않습니다.
 
 ## 공식 자료 갱신
 
