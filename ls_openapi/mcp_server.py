@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date
 from functools import lru_cache
 import os
-from typing import Any
+from typing import Any, Literal
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
@@ -22,6 +22,24 @@ server = FastMCP("ls-openapi")
 def _client() -> LSFutureClient:
     """Create the REST client only when the first tool is called."""
     return LSFutureClient()
+
+
+@server.tool()
+def search_derivative_instruments(
+    query: str,
+    instrument_type: Literal["futures", "options"] = "futures",
+    limit: int = 20,
+) -> dict[str, Any]:
+    """Search index futures/options by a Korean or English name, or by symbol code.
+
+    Returns matching contract candidates with their short and extended codes.
+    Multiple expiries/strikes may match; the caller should let the user choose.
+    """
+    return _client().market.search_instruments(
+        query,
+        instrument_type=instrument_type,
+        limit=limit,
+    )
 
 
 @server.tool()
