@@ -17,16 +17,16 @@ from .websocket import LSWebSocket
 def _instrument_tokens(value: str) -> list[str]:
     """Normalize a natural-language instrument query or master name into tokens."""
     text = value.casefold()
-    text = re.sub(r"kospi\\s*[-_]?\\s*200|코스피\\s*[-_]?\\s*200", " 코스피200 ", text)
-    text = re.sub(r"kosdaq\\s*[-_]?\\s*150|코스닥\\s*[-_]?\\s*150", " 코스닥150 ", text)
-    text = re.sub(r"코스피200\\s*위클리\\s*옵션|코스닥150\\s*위클리\\s*옵션|미니\\s*(선물|옵션)|지수\\s*(선물|옵션)|주식\\s*선물|상품\\s*선물|콜\\s*옵션|풋\\s*옵션", lambda m: re.sub(r"\\s+", " ", m.group(0)), text)
+    text = re.sub(r"kospi\s*[-_]?\s*200|코스피\s*[-_]?\s*200", " 코스피200 ", text)
+    text = re.sub(r"kosdaq\s*[-_]?\s*150|코스닥\s*[-_]?\s*150", " 코스닥150 ", text)
+    text = re.sub(r"코스피200\s*위클리\s*옵션|코스닥150\s*위클리\s*옵션|미니\s*(선물|옵션)|지수\s*(선물|옵션)|주식\s*선물|상품\s*선물|콜\s*옵션|풋\s*옵션", lambda m: re.sub(r"\s+", " ", m.group(0)), text)
     text = re.sub(r"코스피200위클리옵션", "코스피200 위클리 옵션", text)
     text = re.sub(r"코스닥150위클리옵션", "코스닥150 위클리 옵션", text)
-    text = re.sub(r"미니(선물|옵션)", r"미니 \\1", text)
-    text = re.sub(r"(지수|주식|상품)(선물|옵션)", r"\\1 \\2", text)
-    text = re.sub(r"(콜|풋)옵션", r"\\1 옵션", text)
-    text = re.sub(r"찾아\\s*줘|찾아\\s*주세요|검색(?:해)?\\s*줘|검색(?:해)?\\s*주세요|조회(?:해)?\\s*줘|조회(?:해)?\\s*주세요|알려\\s*줘|알려\\s*주세요|보여\\s*줘|보여\\s*주세요", " ", text)
-    text = re.sub(r"\\b(?:please|find|search|lookup|look|up|show|tell|me|the|contract|instrument)\\b", " ", text)
+    text = re.sub(r"미니(선물|옵션)", r"미니 \1", text)
+    text = re.sub(r"(지수|주식|상품)(선물|옵션)", r"\1 \2", text)
+    text = re.sub(r"(콜|풋)옵션", r"\1 옵션", text)
+    text = re.sub(r"찾아\s*줘|찾아\s*주세요|검색(?:해)?\s*줘|검색(?:해)?\s*주세요|조회(?:해)?\s*줘|조회(?:해)?\s*주세요|알려\s*줘|알려\s*주세요|보여\s*줘|보여\s*주세요", " ", text)
+    text = re.sub(r"\b(?:please|find|search|lookup|look|up|show|tell|me|the|contract|instrument)\b", " ", text)
     text = re.sub(r"[^0-9a-z가-힣]+", " ", text)
     ignored = {
         "선물", "선물형", "future", "futures", "옵션", "option", "options",
