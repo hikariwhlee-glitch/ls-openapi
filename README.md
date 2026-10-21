@@ -27,7 +27,7 @@ $env:LS_FUTURES_CODE="조회할 선물 종목코드"
 python examples/futures_quote.py
 ```
 
-``t2111` 현재가와 `t8464` 차트 조회, `FC9` 실시간 구독 예제를 `examples/`에 두었습니다. TR을 직접 다루는 저수준 API와, 자주 쓰는 기능을 이름으로 호출하는 도메인 SDK를 함께 제공합니다.
+`t2111` 현재가와 `t8464` 차트 조회, `FC9` 실시간 구독 예제를 `examples/`에 두었습니다. TR을 직접 다루는 저수준 API와, 자주 쓰는 기능을 이름으로 호출하는 도메인 SDK를 함께 제공합니다.
 
 ### 도메인 SDK
 
@@ -42,13 +42,21 @@ print(quote["t2111OutBlock"])
 balance = client.account.balance()
 ```
 
-`client.market`은 현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 각 메서드는 아직 LS 원본 응답 딕셔너리를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
+`client.market`은 현재가·호가·틱차트, `client.account`는 잔고·주문내역 조회를 제공합니다. 각 메서드는 LS 원본 응답 딕셔너리를 반환합니다. 구조와 사용 예는 [SDK 안내](docs/sdk.md)를 참고하세요.
 
 ### 전체 TR 직접 호출
 
-편의 메서드가 없는 TR도 기존 `LSOpenAPI.call()`로 호출할 수 있습니다. 여러 입력 블록이 필요한 TR은 공식 필드명으로 전체 블록 구조를 `body=`에 전달합니다. 연속조회는 `iter_pages()`를 사용합니다. 전체 TR 목록은 `ls_openapi/catalog.py`에 있습니다.
+편의 메서드가 없는 TR도 `LSOpenAPI.call()`로 호출할 수 있습니다. 여러 입력 블록이 필요한 TR은 공식 필드명으로 전체 블록 구조를 `body=`에 전달합니다. 연속조회는 `iter_pages()`를 사용합니다. 전체 TR 목록은 `ls_openapi/catalog.py`에 있습니다.
 
 주문·정정·취소는 기본 차단됩니다. 메서드가 필요한 경우에만 `LSFutureClient(allow_orders=True)`를 명시하세요. 이 설정은 실계좌 주문도 가능하게 합니다. API 호출에는 발급받은 키와 계좌 권한이 필요합니다.
+
+## Codex 로컬 MCP
+
+Codex가 로컬에서 현재가·호가·잔고·차트 조회를 도구로 호출하는 MCP 서버도 제공합니다. 서버는 Codex가 사용자 PC에서 실행하며, 클라우드 서비스나 주문 도구를 포함하지 않습니다.
+
+- [Codex 로컬 MCP 설치 및 설정](docs/mcp-codex.md)
+
+MCP 기능은 선택 의존성이므로 기존 SDK 설치에는 영향을 주지 않습니다. MCP를 설치할 때는 `pip install -e ".[mcp]"`를 사용합니다.
 
 ## 공식 자료 갱신
 
