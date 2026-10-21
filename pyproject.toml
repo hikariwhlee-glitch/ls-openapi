@@ -1,11 +1,19 @@
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
+
 [project]
 name = "ls-openapi-domestic-derivatives"
 version = "0.1.0"
 description = "Python utilities for LS Securities domestic futures/options OpenAPI"
 requires-python = ">=3.10"
 dependencies = ["requests>=2.31,<3", "websocket-client>=1.7,<2"]
+
+[project.optional-dependencies]
+mcp = ["mcp[cli]>=1.28,<2"]
+
+[project.scripts]
+ls-openapi-mcp = "ls_openapi.mcp_server:main"
+
 [tool.setuptools.packages.find]
 include = ["ls_openapi*"]
