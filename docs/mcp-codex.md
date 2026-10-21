@@ -11,6 +11,7 @@
 5. 설치가 끝나면 Codex를 완전히 종료한 뒤 다시 엽니다. 새 대화에서 아래처럼 사용해보세요.
 
 ```text
+코스피200 선물을 검색해서 만기별 종목명과 코드를 보여줘.
 A016C000 현재가와 호가를 조회해줘.
 ```
 
@@ -18,6 +19,9 @@ A016C000 현재가와 호가를 조회해줘.
 
 ## 제공 도구
 
+- `search_derivative_instruments(query, instrument_type, limit)`: 지수선물·옵션 종목명/코드 검색 (`t9943`, `t9944`)
+  - 예: `query="코스피200 선물"`, `instrument_type="futures"`
+  - 만기·행사가별 후보가 여러 개면 모두 반환하므로, 주문 전에 원하는 계약을 고릅니다.
 - `get_futures_quote(instrument_code)`: 현재가 (`t2111`)
 - `get_futures_orderbook(instrument_code)`: 호가 (`t2112`)
 - `get_account_balance()`: 잔고·보유 포지션 (`t0441`)

@@ -4,7 +4,7 @@
 
 ```text
 LSFutureClient
-├── market      quote, orderbook, tick_chart
+├── market      search_instruments, quote, orderbook, tick_chart
 ├── account     balance, orders
 ├── orders      new, amend, cancel (allow_orders=True 필요)
 ├── websocket() 실시간 연결 객체 생성
@@ -31,13 +31,44 @@ result = client.call("t2112", {"shcode": os.environ["LS_FUTURES_CODE"]})
 
 ## 현재 편의 함수
 
-| 영역 | 메서드 | TR | 결과 |
+| 영역 | 메서드 | 주요 TR | 결과 |
 |---|---|---|---|
+| 종목 | `client.market.search_instruments(query, instrument_type, asset_class, limit)` | t9943, t9944, t8433, t8435, t8401, t8426, t8467 | 상품 분류와 이름·단축코드·확장코드가 포함된 계약 후보 |
 | 시세 | `client.market.quote(code)` | t2111 | LS 원본 응답 딕셔너리 |
 | 시세 | `client.market.orderbook(code)` | t2112 | LS 원본 응답 딕셔너리 |
 | 시세 | `client.market.tick_chart(code, ...)` | t8464 | LS 원본 응답 딕셔너리 |
 | 계좌 | `client.account.balance()` | t0441 | LS 원본 응답 딕셔너리 |
 | 계좌 | `client.account.orders(...)` | t0434 | LS 원본 응답 딕셔너리 |
+
+## 상품 마스터 검색
+
+`search_instruments`는 검색어를 정규화해 LS 공식 종목 마스터 응답과 대조합니다. 검색 대상은 다음과 같습니다.
+
+- 선물: 지수선물(코스피200, 변동성·섹터, 코스닥150, 미니), 주식선물, 상품선물
+- 옵션: 지수옵션(정규, 미니, 코스피200·코스닥150 위클리)
+- 분류: `asset_class="index"`, `"stock"`, `"commodity"`, `"all"`
+- 계약 종류: `instrument_type="futures"` 또는 `"options"`
+
+```python
+# 직접 사용하는 SDK에서는 검색 분류와 종류를 지정합니다.
+candidates = client.market.search_instruments(
+    "삼성전자 주식선물",
+    instrument_type="futures",
+    asset_class="stock",
+)
+for item in candidates["results"]:
+    print(item["name"], item["code"], item["asset_class"])
+
+options = client.market.search_instruments(
+    "코스피200 위클리 400 콜옵션",
+    instrument_type="options",
+    asset_class="index",
+)
+```
+
+MCP 도구는 사용자 자연어에서 상품 종류와 분류를 추출해 인자에 전달하도록 설명되어 있습니다. 한국어·영어 별칭과 흔한 요청 문구를 정규화하지만, 검색 자체는 공식 마스터의 이름·코드와 조건을 비교하는 결정적 로직입니다. AI가 자연어를 이해한다고 해서 서버가 임의로 만기·행사가를 선택하지는 않습니다.
+
+마스터에는 공통 만기 필드가 없거나 상품별 표시 방식이 다를 수 있습니다. 따라서 여러 만기·행사가 후보가 반환되면 모두 보여주고, 요청이 불명확할 때는 사용자가 원하는 계약을 확인합니다. 주식옵션과 상품옵션은 현재 LS 국내 마스터 검색 대상에 없습니다.
 
 ## 주문 권한
 

@@ -11,6 +11,7 @@ from mcp.client.stdio import stdio_client
 
 
 EXPECTED_TOOLS = {
+    "search_derivative_instruments",
     "get_futures_quote",
     "get_futures_orderbook",
     "get_account_balance",
