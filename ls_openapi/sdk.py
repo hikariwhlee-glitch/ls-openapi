@@ -17,6 +17,7 @@ from .websocket import LSWebSocket
 def _instrument_tokens(value: str) -> list[str]:
     """Normalize a natural-language instrument query or master name into tokens."""
     text = value.casefold()
+    text = re.sub(r"가장\\s*가까운\\s*만기|가까운\\s*만기|최근월|근월|nearest\\s+expiry|front\\s+month", " ", text)
     text = re.sub(r"kospi\s*[-_]?\s*200|코스피\s*[-_]?\s*200", " 코스피200 ", text)
     text = re.sub(r"kosdaq\s*[-_]?\s*150|코스닥\s*[-_]?\s*150", " 코스닥150 ", text)
     text = re.sub(r"코스피200\s*위클리\s*옵션|코스닥150\s*위클리\s*옵션|미니\s*(선물|옵션)|지수\s*(선물|옵션)|주식\s*선물|상품\s*선물|콜\s*옵션|풋\s*옵션", lambda m: re.sub(r"\s+", " ", m.group(0)), text)
@@ -79,6 +80,9 @@ class MarketData:
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
             raise ValueError("limit must be an integer from 1 to 100")
 
+        nearest_expiry_requested = bool(
+            re.search(r"최근월|근월|가까운\\s*만기|가장\\s*가까운\\s*만기|nearest\\s+expiry|front\\s+month", query, re.IGNORECASE)
+        )
         query_tokens = _instrument_tokens(query)
         if not query_tokens and not re.search(r"선물|future|옵션|option|파생", query, re.IGNORECASE):
             raise ValueError("query must include a product name, category or symbol code")
@@ -161,6 +165,12 @@ class MarketData:
                 if instrument_type == "options" and asset_class in {"all", "stock", "commodity"}
                 else []
             ),
+            "unresolved_constraints": (
+                ["nearest_expiry"]
+                if nearest_expiry_requested
+                else []
+            ),
+            "selection_required": len(matches) > 1 or nearest_expiry_requested,
             "results": matches[:limit],
         }
 
