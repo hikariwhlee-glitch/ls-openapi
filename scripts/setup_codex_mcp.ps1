@@ -47,12 +47,11 @@ if (-not (Test-Path -LiteralPath $pythonExe)) {
     if ($LASTEXITCODE -ne 0) { throw "Python 가상환경을 만들지 못했습니다." }
 }
 
+$packageSpec = "${repoRoot}[mcp]"
 Write-Host "MCP 패키지를 설치합니다..."
-& $pythonExe -m pip install --disable-pip-version-check -e "$repoRoot[ mcp ]"
+& $pythonExe -m pip install --disable-pip-version-check -e $packageSpec
 if ($LASTEXITCODE -ne 0) {
-    # PowerShell treats brackets in a quoted argument literally; use pip's canonical extras syntax.
-    & $pythonExe -m pip install --disable-pip-version-check -e "$repoRoot" "mcp[cli]>=1.28,<2"
-    if ($LASTEXITCODE -ne 0) { throw "패키지 설치에 실패했습니다. 인터넷 연결을 확인하고 다시 실행하세요." }
+    throw "패키지 설치에 실패했습니다. 인터넷 연결을 확인하고 다시 실행하세요."
 }
 
 if (Test-Path -LiteralPath $envPath) {
