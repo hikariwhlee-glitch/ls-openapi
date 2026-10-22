@@ -6,6 +6,8 @@ Add-Type -AssemblyName System.Drawing
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $envPath = Join-Path $repoRoot ".env"
 $backendPath = Join-Path $PSScriptRoot "setup_codex_mcp_run.ps1"
+$logDirectory = Join-Path $env:LOCALAPPDATA "LSOpenAPI"
+$logPath = Join-Path $logDirectory "setup.log"
 $form = New-Object Windows.Forms.Form
 $form.Text = "LS OpenAPI MCP 설치"
 $form.StartPosition = "CenterScreen"
@@ -102,6 +104,14 @@ $logBox.BackColor = [Drawing.Color]::FromArgb(247, 248, 250)
 $logBox.Font = New-Object Drawing.Font("Consolas", 9)
 $form.Controls.Add($logBox)
 
+$logPathLabel = New-Object Windows.Forms.Label
+$logPathLabel.Text = "상세 로그: $logPath"
+$logPathLabel.Location = New-Object Drawing.Point(28, 584)
+$logPathLabel.Size = New-Object Drawing.Size(470, 24)
+$logPathLabel.AutoEllipsis = $true
+$logPathLabel.ForeColor = [Drawing.Color]::FromArgb(85, 95, 110)
+$form.Controls.Add($logPathLabel)
+
 $elapsedLabel = New-Object Windows.Forms.Label
 $elapsedLabel.Text = ""
 $elapsedLabel.Location = New-Object Drawing.Point(28, 594)
@@ -123,6 +133,18 @@ $closeButton.Location = New-Object Drawing.Point(618, 594)
 $closeButton.Size = New-Object Drawing.Size(92, 34)
 $form.Controls.Add($closeButton)
 $closeButton.Add_Click({ $form.Close() })
+
+$openLogButton = New-Object Windows.Forms.Button
+$openLogButton.Text = "로그 열기"
+$openLogButton.Location = New-Object Drawing.Point(414, 594)
+$openLogButton.Size = New-Object Drawing.Size(92, 34)
+$openLogButton.Enabled = $false
+$openLogButton.Add_Click({
+    if (Test-Path -LiteralPath $logPath) {
+        Start-Process notepad.exe -ArgumentList @("`"$logPath`"")
+    }
+})
+$form.Controls.Add($openLogButton)
 
 function Read-DotEnvValue {
     param([string]$Text, [string]$Name)
@@ -155,7 +177,15 @@ $timer.Interval = 250
 $appendLog = [Action[string]]{
     param($Line)
     if ([string]::IsNullOrWhiteSpace($Line)) { return }
-    $logBox.AppendText($Line + [Environment]::NewLine)
+    $safeLine = $Line
+    foreach ($secret in $script:secretValues) {
+        if (-not [string]::IsNullOrEmpty($secret)) { $safeLine = $safeLine.Replace($secret, "[숨김]") }
+    }
+    try {
+        $logBox.AppendText($safeLine + [Environment]::NewLine)
+        [IO.File]::AppendAllText($logPath, ("{0:yyyy-MM-dd HH:mm:ss} {1}{2}" -f (Get-Date), $safeLine, [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
+    }
+    catch { }
     $logBox.SelectionStart = $logBox.TextLength
     $logBox.ScrollToCaret()
     if ($Line -match '^\[STEP\] \[(\d+)/6\] (.+)$') {
@@ -199,6 +229,15 @@ $startButton.Add_Click({
     }
 
     $logBox.Clear()
+    $script:secretValues = @($keyBox.Text, $secretBox.Text)
+    try {
+        New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+        [IO.File]::WriteAllText($logPath, ("LS OpenAPI MCP 설치 로그 - {0:yyyy-MM-dd HH:mm:ss}{1}" -f (Get-Date), [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
+    }
+    catch {
+        [Windows.Forms.MessageBox]::Show("로그 파일을 만들 수 없습니다: $($_.Exception.Message)", "로그 오류", [Windows.Forms.MessageBoxButtons]::OK, [Windows.Forms.MessageBoxIcon]::Warning) | Out-Null
+    }
+    $openLogButton.Enabled = $true
     $statusLabel.ForeColor = [Drawing.Color]::Black
     $statusLabel.Text = "설치를 시작합니다..."
     $progress.Style = [Windows.Forms.ProgressBarStyle]::Marquee
@@ -227,17 +266,24 @@ $startButton.Add_Click({
     if ($replaceBox.Checked) { $processInfo.EnvironmentVariables["LS_SETUP_REPLACE_EXISTING"] = "1" }
     else { $processInfo.EnvironmentVariables["LS_SETUP_REPLACE_EXISTING"] = "0" }
     $processInfo.EnvironmentVariables["PYTHONUTF8"] = "1"
+    $processInfo.EnvironmentVariables["LS_SETUP_LOG_PATH"] = $logPath
 
     $script:process = New-Object Diagnostics.Process
     $script:process.StartInfo = $processInfo
     $script:process.EnableRaisingEvents = $true
     $script:process.add_OutputDataReceived({
         param($sender, $eventArgs)
-        if ($null -ne $eventArgs.Data) { $form.BeginInvoke($appendLog, @($eventArgs.Data)) | Out-Null }
+        if ($null -ne $eventArgs.Data) {
+            try { $form.BeginInvoke($appendLog, @($eventArgs.Data)) | Out-Null }
+            catch { try { [IO.File]::AppendAllText($logPath, ("STDOUT: {0}{1}" -f $eventArgs.Data, [Environment]::NewLine), [Text.UTF8Encoding]::new($false)) } catch {} }
+        }
     }.GetNewClosure())
     $script:process.add_ErrorDataReceived({
         param($sender, $eventArgs)
-        if ($null -ne $eventArgs.Data) { $form.BeginInvoke($appendLog, @($eventArgs.Data)) | Out-Null }
+        if ($null -ne $eventArgs.Data) {
+            try { $form.BeginInvoke($appendLog, @("[STDERR] $($eventArgs.Data)")) | Out-Null }
+            catch { try { [IO.File]::AppendAllText($logPath, ("STDERR: {0}{1}" -f $eventArgs.Data, [Environment]::NewLine), [Text.UTF8Encoding]::new($false)) } catch {} }
+        }
     }.GetNewClosure())
     $script:process.add_Exited({
         $exitCode = $script:process.ExitCode
@@ -257,6 +303,8 @@ $startButton.Add_Click({
             $secretBox.Enabled = $true
             $urlBox.Enabled = $true
             $replaceBox.Enabled = $true
+            $openLogButton.Enabled = $true
+            $script:secretValues = @()
         }) | Out-Null
     }.GetNewClosure())
     try {

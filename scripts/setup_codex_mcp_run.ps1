@@ -1,6 +1,15 @@
 ﻿#requires -Version 5.1
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$transcriptStarted = $false
+$logPath = $env:LS_SETUP_LOG_PATH
+if (-not [string]::IsNullOrWhiteSpace($logPath)) {
+    try {
+        Start-Transcript -Path $logPath -Append -Force | Out-Null
+        $transcriptStarted = $true
+    }
+    catch { }
+}
 
 function Write-Step {
     param([int]$Number, [string]$Message)
@@ -27,6 +36,7 @@ try {
     if ([string]::IsNullOrWhiteSpace($appKey) -or [string]::IsNullOrWhiteSpace($appSecret)) {
         throw "앱키와 앱시크릿을 모두 입력해야 합니다."
     }
+    Remove-Item Env:\LS_SETUP_LOG_PATH -ErrorAction SilentlyContinue
 
     Write-Step 1 "Python 버전을 확인합니다."
     $systemPython = Get-Command python -ErrorAction SilentlyContinue
@@ -84,6 +94,7 @@ try {
     if ($existing -match [regex]::Escape($serverName)) {
         if (-not $replaceExisting) {
             Write-Output "기존 '$serverName' 등록을 유지했습니다. .env와 패키지는 준비됐습니다."
+            if ($transcriptStarted) { Stop-Transcript | Out-Null }
             exit 0
         }
         & $codexCommand.Source mcp remove $serverName
@@ -98,9 +109,11 @@ try {
     Write-Output "설치와 Codex 등록이 완료됐습니다."
     Write-Output "Codex를 완전히 종료한 뒤 다시 열고 새 대화에서 시세 조회 도구를 사용하세요."
     Write-Output "계좌 잔고 도구는 계좌 정보를 Codex 대화에 전달합니다. 주문 도구는 등록되지 않습니다."
+    if ($transcriptStarted) { Stop-Transcript | Out-Null }
     exit 0
 }
 catch {
     Write-Output "[ERROR] $($_.Exception.Message)"
+    if ($transcriptStarted) { Stop-Transcript | Out-Null }
     exit 1
 }
