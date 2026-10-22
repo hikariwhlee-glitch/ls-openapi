@@ -114,13 +114,13 @@ $form.Controls.Add($logPathLabel)
 
 $elapsedLabel = New-Object Windows.Forms.Label
 $elapsedLabel.Text = ""
-$elapsedLabel.Location = New-Object Drawing.Point(28, 594)
+$elapsedLabel.Location = New-Object Drawing.Point(28, 614)
 $elapsedLabel.Size = New-Object Drawing.Size(300, 24)
 $form.Controls.Add($elapsedLabel)
 
 $startButton = New-Object Windows.Forms.Button
 $startButton.Text = "설치 시작"
-$startButton.Location = New-Object Drawing.Point(516, 594)
+$startButton.Location = New-Object Drawing.Point(516, 614)
 $startButton.Size = New-Object Drawing.Size(92, 34)
 $startButton.BackColor = [Drawing.Color]::FromArgb(35, 95, 190)
 $startButton.ForeColor = [Drawing.Color]::White
@@ -129,14 +129,14 @@ $form.Controls.Add($startButton)
 
 $closeButton = New-Object Windows.Forms.Button
 $closeButton.Text = "닫기"
-$closeButton.Location = New-Object Drawing.Point(618, 594)
+$closeButton.Location = New-Object Drawing.Point(618, 614)
 $closeButton.Size = New-Object Drawing.Size(92, 34)
 $form.Controls.Add($closeButton)
 $closeButton.Add_Click({ $form.Close() })
 
 $openLogButton = New-Object Windows.Forms.Button
 $openLogButton.Text = "로그 열기"
-$openLogButton.Location = New-Object Drawing.Point(414, 594)
+$openLogButton.Location = New-Object Drawing.Point(414, 614)
 $openLogButton.Size = New-Object Drawing.Size(92, 34)
 $openLogButton.Enabled = $false
 $openLogButton.Add_Click({
