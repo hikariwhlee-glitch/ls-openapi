@@ -45,7 +45,23 @@ try {
     $inputUrl = Read-Host "LS API 주소 [$baseUrl] (기본 주소를 쓰려면 Enter)"; if (-not [string]::IsNullOrWhiteSpace($inputUrl)) { $baseUrl = $inputUrl }
     $envText = Set-EnvValue $envText "LS_BASE_URL" $baseUrl; [IO.File]::WriteAllText($envPath, $envText, [Text.UTF8Encoding]::new($false)); Write-Host "키 설정을 .env에 저장했습니다. 키 값은 로그에 출력하지 않습니다."
     Write-Step 5 "Codex CLI와 기존 MCP 등록을 확인합니다."
-    $codexCommand = Get-Command codex -ErrorAction SilentlyContinue; if (-not $codexCommand) { throw "Codex CLI를 찾지 못했습니다. Codex를 설치하고 PATH를 확인하세요." }
+    $codexCommand = Get-Command codex -ErrorAction SilentlyContinue
+    if (-not $codexCommand) {
+        Write-Host "Codex CLI가 없습니다. npm으로 공식 Codex CLI를 설치합니다." -ForegroundColor Yellow
+        $npmCommand = Get-Command npm -ErrorAction SilentlyContinue
+        if (-not $npmCommand) { throw "Codex CLI 설치에 필요한 npm을 찾지 못했습니다. Node.js LTS를 설치한 뒤 다시 실행하세요." }
+        & $npmCommand.Source install --global @openai/codex@latest
+        if ($LASTEXITCODE -ne 0) { throw "Codex CLI 설치 실패 (npm 종료 코드: $LASTEXITCODE). 인터넷 연결과 Node.js/npm 설치를 확인한 뒤 다시 실행하세요." }
+        $npmPrefix = (& $npmCommand.Source config get prefix 2>&1 | Out-String).Trim()
+        if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($npmPrefix)) { $env:PATH = $npmPrefix + ";" + $env:PATH }
+        $codexCommand = Get-Command codex -ErrorAction SilentlyContinue
+        if (-not $codexCommand -and -not [string]::IsNullOrWhiteSpace($npmPrefix)) {
+            $codexShim = Join-Path $npmPrefix "codex.cmd"
+            if (Test-Path -LiteralPath $codexShim) { $codexCommand = Get-Command $codexShim -ErrorAction SilentlyContinue }
+        }
+        if (-not $codexCommand) { throw "Codex CLI는 설치됐지만 현재 터미널에서 찾지 못했습니다. 새 CMD 창을 열고 다시 실행하세요." }
+        Write-Host "Codex CLI 설치 확인 완료."
+    }
     $existing = & $codexCommand.Source mcp list 2>&1 | Out-String; if ($LASTEXITCODE -ne 0) { throw "Codex CLI에서 MCP 등록 목록을 읽지 못했습니다." }
     $register = $true
     if ($existing -match [regex]::Escape($serverName)) {
