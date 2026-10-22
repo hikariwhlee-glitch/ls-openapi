@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $logDirectory = Join-Path $env:LOCALAPPDATA "LSOpenAPI"
@@ -9,7 +9,7 @@ try { New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null; Start-
 function Write-Step([int]$Number, [string]$Message) { Write-Host ""; Write-Host "[$Number/6] $Message" -ForegroundColor Cyan }
 function ConvertFrom-SecureInput([Security.SecureString]$Value) { $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($Value); try { [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) } finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer) } }
 function Set-EnvValue([string]$Text, [string]$Name, [string]$Value) {
-    $escaped = $Value.Replace('"', '\\"')
+    $escaped = $Value.Replace('"', ([char]92 + '"'))
     $line = $Name + '="' + $escaped + '"'
     $pattern = "(?m)^$([regex]::Escape($Name))=.*$"
     if ($Text -match $pattern) { return [regex]::Replace($Text, $pattern, [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $line }) }
@@ -52,7 +52,7 @@ try {
         $answer = Read-Host "기존 '$serverName' 등록을 새 경로로 갱신할까요? [y/N]"
         if ($answer -notmatch '^(y|yes)$') { $register = $false; Write-Host "기존 MCP 등록을 유지합니다." } else { & $codexCommand.Source mcp remove $serverName; if ($LASTEXITCODE -ne 0) { throw "기존 MCP 등록을 제거하지 못했습니다." } }
     }
-    if ($register) { Write-Step 6 "Codex에 MCP 서버를 등록합니다."; & $codexCommand.Source mcp add $serverName --env "LS_OPENAPI_ENV_FILE=$envPath" -- $pythonExe -m ls_openapi.mcp_server; if ($LASTEXITCODE -ne 0) { throw "Codex에 MCP 서버를 등록하지 못했습니다." } }
+    if ($register) { Write-Step 6 "Codex에 MCP 서버를 등록합니다."; & $codexCommand.Source mcp add $serverName --env "LS_OPENAPI_ENV_FILE=$envPath" -- $pythonExe -m ls_openapi.mcp_server; if ($LASTEXITCODE -ne 0) { throw "Codex에 MCP 서버를 등록하지 못했습니다." } } else { Write-Step 6 "기존 MCP 등록을 유지합니다." }
     Write-Host ""; Write-Host "설치와 Codex 등록이 완료됐습니다." -ForegroundColor Green; Write-Host "Codex를 완전히 종료한 뒤 다시 열고 새 대화에서 시세 조회 도구를 사용해보세요."; Write-Host "주문 도구는 등록되지 않습니다."
 } catch { $failure = $_.Exception.Message; Write-Host ""; Write-Host "설치에 실패했습니다: $failure" -ForegroundColor Red; Write-Host "상세 로그: $logPath" -ForegroundColor Yellow } finally { if ($transcriptStarted) { Stop-Transcript | Out-Null } }
 if ($failure) { exit 1 }; exit 0
