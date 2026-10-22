@@ -1,4 +1,6 @@
 ﻿#requires -Version 5.1
+$ErrorActionPreference = "Stop"
+try {
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Windows.Forms.Application]::EnableVisualStyles()
@@ -248,6 +250,7 @@ $startButton.Add_Click({
     $replaceBox.Enabled = $false
     $script:startedAt = [Diagnostics.Stopwatch]::StartNew()
 
+    try {
     $powershellExe = Join-Path $env:WINDIR "System32\WindowsPowerShell\v1.0\powershell.exe"
     $processInfo = New-Object Diagnostics.ProcessStartInfo
     $processInfo.FileName = $powershellExe
@@ -306,13 +309,22 @@ $startButton.Add_Click({
             $script:secretValues = @()
         }) | Out-Null
     }.GetNewClosure())
-    try {
         [void]$script:process.Start()
         $script:process.BeginOutputReadLine()
         $script:process.BeginErrorReadLine()
         $timer.Start()
     }
     catch {
+        $timer.Stop()
+        if ($script:startedAt) { $script:startedAt.Stop() }
+        $failureText = $_.Exception.ToString()
+        foreach ($secret in @($keyBox.Text, $secretBox.Text)) {
+            if (-not [string]::IsNullOrEmpty($secret)) { $failureText = $failureText.Replace($secret, "[숨김]") }
+        }
+        try {
+            [IO.File]::AppendAllText($logPath, ("{0:yyyy-MM-dd HH:mm:ss} [INSTALLER LAUNCH ERROR] {1}{2}{2}" -f (Get-Date), $failureText, [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
+        }
+        catch { }
         $progress.Style = [Windows.Forms.ProgressBarStyle]::Blocks
         $statusLabel.Text = "설치 작업을 시작하지 못했습니다."
         $statusLabel.ForeColor = [Drawing.Color]::Firebrick
@@ -321,7 +333,9 @@ $startButton.Add_Click({
         $secretBox.Enabled = $true
         $urlBox.Enabled = $true
         $replaceBox.Enabled = $true
-        [Windows.Forms.MessageBox]::Show($_.Exception.Message, "시작 오류", [Windows.Forms.MessageBoxButtons]::OK, [Windows.Forms.MessageBoxIcon]::Error) | Out-Null
+        $openLogButton.Enabled = $true
+        $script:secretValues = @()
+        [Windows.Forms.MessageBox]::Show($failureText, "설치 시작 오류", [Windows.Forms.MessageBoxButtons]::OK, [Windows.Forms.MessageBoxIcon]::Error) | Out-Null
     }
 })
 
@@ -343,3 +357,23 @@ $form.Add_FormClosing({
 })
 
 [void]$form.ShowDialog()
+}
+catch {
+    $failure = "설치 마법사를 시작하지 못했습니다.`r`n`r`n$($_.Exception.Message)"
+    try {
+        $fallbackLogDirectory = Join-Path $env:LOCALAPPDATA "LSOpenAPI"
+        New-Item -ItemType Directory -Path $fallbackLogDirectory -Force | Out-Null
+        $fallbackLogPath = Join-Path $fallbackLogDirectory "setup.log"
+        $details = $_.Exception.ToString()
+        [IO.File]::AppendAllText($fallbackLogPath, ("{0:yyyy-MM-dd HH:mm:ss} [GUI STARTUP ERROR] {1}{2}{2}" -f (Get-Date), $details, [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
+    }
+    catch { }
+    try {
+        [Windows.Forms.MessageBox]::Show($failure, "LS OpenAPI MCP 설치 오류", [Windows.Forms.MessageBoxButtons]::OK, [Windows.Forms.MessageBoxIcon]::Error) | Out-Null
+    }
+    catch {
+        Write-Error $failure
+        Read-Host "Enter 키를 누르면 종료합니다"
+    }
+    exit 1
+}
