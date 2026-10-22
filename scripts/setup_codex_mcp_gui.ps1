@@ -183,7 +183,6 @@ $appendLog = [Action[string]]{
     }
     try {
         $logBox.AppendText($safeLine + [Environment]::NewLine)
-        [IO.File]::AppendAllText($logPath, ("{0:yyyy-MM-dd HH:mm:ss} {1}{2}" -f (Get-Date), $safeLine, [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
     }
     catch { }
     $logBox.SelectionStart = $logBox.TextLength
